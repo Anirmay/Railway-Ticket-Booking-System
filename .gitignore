@@ -1,0 +1,37 @@
+# ignore node modules in both frontend and backend
+node_modules/
+frontend/node_modules/
+backend/node_modules/
+
+# temporary logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# environment files
+.env
+.env.*
+
+# build output
+dist/
+build/
+frontend/dist/
+frontend/build/
+backend/dist/
+
+# editor config
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# coverage and cache
+coverage/
+.cache/
+
+# lockfiles typically should be committed unless you intentionally want to ignore them
+# e.g. package-lock.json or yarn.lock should remain tracked for dependency consistency

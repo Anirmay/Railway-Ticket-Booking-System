@@ -1,0 +1,513 @@
+{
+  "users": [
+    {
+      "_id": "user-admin",
+      "name": "Administrator",
+      "username": "admin",
+      "email": "admin@railease.com",
+      "phone": "0000000000",
+      "password": "$2b$10$SRVz63wB9rqraLYk/PadbeKQ.WOBtF1qQ3SB1CZu8633f//WB70li",
+      "role": "admin",
+      "status": "active"
+    },
+    {
+      "_id": "user-2",
+      "name": "Meera Rao",
+      "username": "meera",
+      "email": "meera@example.com",
+      "phone": "9876543211",
+      "password": "$2b$10$ASFb6DzeZPdBfUrFhdBZ9.w7P3Vuekwv6iCNJL5eM0Q7URrW1UDN6",
+      "role": "user",
+      "status": "active"
+    },
+    {
+      "_id": "user-3",
+      "name": "Rohan Verma",
+      "username": "rohan",
+      "email": "rohan@example.com",
+      "phone": "9876543212",
+      "password": "$2b$10$ASFb6DzeZPdBfUrFhdBZ9.w7P3Vuekwv6iCNJL5eM0Q7URrW1UDN6",
+      "role": "user",
+      "status": "active"
+    },
+    {
+      "_id": "user-4",
+      "name": "Sneha Kulkarni",
+      "username": "sneha",
+      "email": "sneha@example.com",
+      "phone": "9876543213",
+      "password": "$2b$10$ASFb6DzeZPdBfUrFhdBZ9.w7P3Vuekwv6iCNJL5eM0Q7URrW1UDN6",
+      "role": "user",
+      "status": "active"
+    },
+    {
+      "_id": "user-5",
+      "name": "Karthik Nair",
+      "username": "karthik",
+      "email": "karthik@example.com",
+      "phone": "9876543214",
+      "password": "$2b$10$ASFb6DzeZPdBfUrFhdBZ9.w7P3Vuekwv6iCNJL5eM0Q7URrW1UDN6",
+      "role": "user",
+      "status": "active"
+    },
+    {
+      "_id": "user-6",
+      "name": "Pooja Singh",
+      "username": "pooja",
+      "email": "pooja@example.com",
+      "phone": "9876543215",
+      "password": "$2b$10$ASFb6DzeZPdBfUrFhdBZ9.w7P3Vuekwv6iCNJL5eM0Q7URrW1UDN6",
+      "role": "user",
+      "status": "active"
+    },
+    {
+      "_id": "user-7",
+      "name": "Ankit Rao",
+      "username": "ankit",
+      "email": "ankit@example.com",
+      "phone": "9876543216",
+      "password": "$2b$10$ASFb6DzeZPdBfUrFhdBZ9.w7P3Vuekwv6iCNJL5eM0Q7URrW1UDN6",
+      "role": "user",
+      "status": "active"
+    },
+    {
+      "_id": "user-8",
+      "name": "Divya Patel",
+      "username": "divya",
+      "email": "divya@example.com",
+      "phone": "9876543217",
+      "password": "$2b$10$ASFb6DzeZPdBfUrFhdBZ9.w7P3Vuekwv6iCNJL5eM0Q7URrW1UDN6",
+      "role": "user",
+      "status": "active"
+    },
+    {
+      "_id": "user-9",
+      "name": "Nikhil Agarwal",
+      "username": "nikhil",
+      "email": "nikhil@example.com",
+      "phone": "9876543218",
+      "password": "$2b$10$ASFb6DzeZPdBfUrFhdBZ9.w7P3Vuekwv6iCNJL5eM0Q7URrW1UDN6",
+      "role": "user",
+      "status": "active"
+    },
+    {
+      "_id": "user-10",
+      "name": "Ishita Bose",
+      "username": "ishita",
+      "email": "ishita@example.com",
+      "phone": "9876543219",
+      "password": "$2b$10$ASFb6DzeZPdBfUrFhdBZ9.w7P3Vuekwv6iCNJL5eM0Q7URrW1UDN6",
+      "role": "user",
+      "status": "active"
+    },
+    {
+      "_id": "user-1785839684782-634",
+      "name": "Anirmay Khan",
+      "username": "anirmay",
+      "email": "anirmay.05khan@gmail.com",
+      "phone": "8367833266",
+      "password": "$2b$10$4Q/0XDxnKWbLge4lVCLYze/X4osncpIMLWKh48oX8ao4n9Mlj5jiy",
+      "role": "user",
+      "status": "active"
+    }
+  ],
+  "trains": [
+    {
+      "_id": "train-1",
+      "trainNumber": "12015",
+      "name": "Rajdhani Express",
+      "source": "Delhi",
+      "destination": "Mumbai",
+      "departure": "08:00",
+      "arrival": "20:30",
+      "fare": 1865,
+      "seatsAvailable": 62,
+      "image": "https://images.unsplash.com/photo-1516008623956-7b68f2f4d6b1?auto=format&fit=crop&w=900&q=80",
+      "route": "Delhi → Jaipur → Ahmedabad → Mumbai",
+      "facilities": [
+        "AC",
+        "WiFi",
+        "Food"
+      ],
+      "coach": "A1"
+    },
+    {
+      "_id": "train-2",
+      "trainNumber": "12617",
+      "name": "Shatabdi Superfast",
+      "source": "Mumbai",
+      "destination": "Pune",
+      "departure": "06:45",
+      "arrival": "09:20",
+      "fare": 820,
+      "seatsAvailable": 43,
+      "image": "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=900&q=80",
+      "route": "Mumbai → Thane → Pune",
+      "facilities": [
+        "AC",
+        "Catering"
+      ],
+      "coach": "B2"
+    },
+    {
+      "_id": "train-3",
+      "trainNumber": "12431",
+      "name": "Garib Rath",
+      "source": "Chennai",
+      "destination": "Bengaluru",
+      "departure": "21:00",
+      "arrival": "04:30",
+      "fare": 940,
+      "seatsAvailable": 54,
+      "image": "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=900&q=80",
+      "route": "Chennai → Salem → Bengaluru",
+      "facilities": [
+        "AC",
+        "Charging"
+      ],
+      "coach": "C3"
+    },
+    {
+      "_id": "train-4",
+      "trainNumber": "12951",
+      "name": "Duronto Express",
+      "source": "Kolkata",
+      "destination": "New Delhi",
+      "departure": "22:10",
+      "arrival": "08:55",
+      "fare": 1675,
+      "seatsAvailable": 61,
+      "image": "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=900&q=80",
+      "route": "Kolkata → Varanasi → New Delhi",
+      "facilities": [
+        "AC",
+        "WiFi",
+        "Meal"
+      ],
+      "coach": "D4"
+    },
+    {
+      "_id": "train-5",
+      "trainNumber": "20801",
+      "name": "Vande Bharat",
+      "source": "Hyderabad",
+      "destination": "Vijayawada",
+      "departure": "05:50",
+      "arrival": "09:15",
+      "fare": 1100,
+      "seatsAvailable": 50,
+      "image": "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?auto=format&fit=crop&w=900&q=80",
+      "route": "Hyderabad → Warangal → Vijayawada",
+      "facilities": [
+        "AC",
+        "WiFi"
+      ],
+      "coach": "E5"
+    },
+    {
+      "_id": "train-6",
+      "trainNumber": "11013",
+      "name": "Swarna Jayanti",
+      "source": "Bengaluru",
+      "destination": "Howrah",
+      "departure": "14:20",
+      "arrival": "08:10",
+      "fare": 1480,
+      "seatsAvailable": 57,
+      "image": "https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=900&q=80",
+      "route": "Bengaluru → Vijayawada → Howrah",
+      "facilities": [
+        "AC",
+        "Food"
+      ],
+      "coach": "F6"
+    },
+    {
+      "_id": "train-7",
+      "trainNumber": "12295",
+      "name": "Jan Shatabdi",
+      "source": "Ahmedabad",
+      "destination": "Jaipur",
+      "departure": "07:10",
+      "arrival": "12:45",
+      "fare": 760,
+      "seatsAvailable": 49,
+      "image": "https://images.unsplash.com/photo-1469307592270-0f5b7a8ff2b1?auto=format&fit=crop&w=900&q=80",
+      "route": "Ahmedabad → Udaipur → Jaipur",
+      "facilities": [
+        "AC",
+        "Catering"
+      ],
+      "coach": "G7"
+    },
+    {
+      "_id": "train-8",
+      "trainNumber": "12859",
+      "name": "Karnavati Express",
+      "source": "Surat",
+      "destination": "Delhi",
+      "departure": "19:40",
+      "arrival": "10:35",
+      "fare": 1325,
+      "seatsAvailable": 63,
+      "image": "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=900&q=80",
+      "route": "Surat → Vadodara → Delhi",
+      "facilities": [
+        "AC",
+        "WiFi",
+        "Food"
+      ],
+      "coach": "H8"
+    },
+    {
+      "_id": "train-9",
+      "trainNumber": "16587",
+      "name": "Mysuru Express",
+      "source": "Mysuru",
+      "destination": "Chennai",
+      "departure": "18:50",
+      "arrival": "05:40",
+      "fare": 915,
+      "seatsAvailable": 46,
+      "image": "https://images.unsplash.com/photo-1530521954074-e64f6810b32d?auto=format&fit=crop&w=900&q=80",
+      "route": "Mysuru → Bengaluru → Chennai",
+      "facilities": [
+        "AC",
+        "Charging"
+      ],
+      "coach": "I9"
+    },
+    {
+      "_id": "train-10",
+      "trainNumber": "12365",
+      "name": "Paschim Express",
+      "source": "Lucknow",
+      "destination": "Kanpur",
+      "departure": "16:15",
+      "arrival": "19:05",
+      "fare": 690,
+      "seatsAvailable": 40,
+      "image": "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=900&q=80",
+      "route": "Lucknow → Kanpur",
+      "facilities": [
+        "AC",
+        "Food"
+      ],
+      "coach": "J10"
+    }
+  ],
+  "bookings": [
+    {
+      "_id": "booking-1785839903139-459",
+      "user": "user-1785839684782-634",
+      "train": "train-1",
+      "passengerName": "",
+      "age": "",
+      "gender": "Male",
+      "seatPreference": "Window",
+      "seats": 1,
+      "pnr": "PNR70700BAC",
+      "amount": 1865,
+      "coach": "A1",
+      "seatNumber": "1C",
+      "trainName": "Rajdhani Express",
+      "source": "Delhi",
+      "destination": "Mumbai",
+      "status": "cancelled",
+      "paymentStatus": "paid",
+      "createdAt": "2026-08-04T10:38:23.139Z"
+    },
+    {
+      "_id": "booking-1785839925845-440",
+      "user": "user-1785839684782-634",
+      "train": "train-1",
+      "passengerName": "",
+      "age": "",
+      "gender": "Male",
+      "seatPreference": "Window",
+      "seats": 1,
+      "pnr": "PNR07E61678",
+      "amount": 1865,
+      "coach": "A1",
+      "seatNumber": "10B",
+      "trainName": "Rajdhani Express",
+      "source": "Delhi",
+      "destination": "Mumbai",
+      "status": "cancelled",
+      "paymentStatus": "paid",
+      "createdAt": "2026-08-04T10:38:45.845Z"
+    },
+    {
+      "_id": "booking-1785840470678-778",
+      "user": "user-1785839684782-634",
+      "train": "train-1",
+      "passengerName": "",
+      "age": "",
+      "gender": "Male",
+      "seatPreference": "Window",
+      "seats": 1,
+      "pnr": "PNR8E89DF75",
+      "amount": 1865,
+      "coach": "A1",
+      "seatNumber": "15C",
+      "trainName": "Rajdhani Express",
+      "source": "Delhi",
+      "destination": "Mumbai",
+      "status": "confirmed",
+      "paymentStatus": "paid",
+      "createdAt": "2026-08-04T10:47:50.678Z"
+    },
+    {
+      "_id": "booking-1785856196613-300",
+      "user": "user-1785839684782-634",
+      "train": "train-2",
+      "passengerName": "",
+      "age": "",
+      "gender": "Male",
+      "seatPreference": "Window",
+      "seats": 1,
+      "pnr": "PNR048B0C0A",
+      "amount": 820,
+      "coach": "B2",
+      "seatNumber": "16A",
+      "trainName": "Shatabdi Superfast",
+      "source": "Mumbai",
+      "destination": "Pune",
+      "status": "confirmed",
+      "paymentStatus": "paid",
+      "createdAt": "2026-08-04T15:09:56.613Z"
+    },
+    {
+      "_id": "booking-1785856261769-3",
+      "user": "user-1785839684782-634",
+      "train": "train-1",
+      "passengerName": "",
+      "age": "",
+      "gender": "Male",
+      "seatPreference": "Window",
+      "seats": 1,
+      "pnr": "PNRFF18AADD",
+      "amount": 1865,
+      "coach": "A1",
+      "seatNumber": "20C",
+      "trainName": "Rajdhani Express",
+      "source": "Delhi",
+      "destination": "Mumbai",
+      "status": "confirmed",
+      "paymentStatus": "paid",
+      "createdAt": "2026-08-04T15:11:01.769Z"
+    },
+    {
+      "_id": "booking-1785862113169-989",
+      "user": "user-admin",
+      "train": "train-1",
+      "passengerName": "",
+      "age": "",
+      "gender": "Male",
+      "seatPreference": "Window",
+      "seats": 1,
+      "pnr": "PNR40A76F5D",
+      "amount": 1865,
+      "coach": "A1",
+      "seatNumber": "6B",
+      "trainName": "Rajdhani Express",
+      "source": "Delhi",
+      "destination": "Mumbai",
+      "status": "confirmed",
+      "paymentStatus": "paid",
+      "createdAt": "2026-08-04T16:48:33.169Z"
+    },
+    {
+      "_id": "booking-1785865922916-661",
+      "user": "user-1785839684782-634",
+      "train": "train-1",
+      "passengerName": "",
+      "age": "",
+      "gender": "Male",
+      "seatPreference": "Window",
+      "seats": 1,
+      "pnr": "PNR3FCF92B0",
+      "amount": 1865,
+      "coach": "A1",
+      "seatNumber": "10A",
+      "trainName": "Rajdhani Express",
+      "source": "Delhi",
+      "destination": "Mumbai",
+      "status": "confirmed",
+      "paymentStatus": "paid",
+      "createdAt": "2026-08-04T17:52:02.917Z"
+    }
+  ],
+  "payments": [
+    {
+      "_id": "payment-1785839903141-650",
+      "user": "user-1785839684782-634",
+      "booking": "booking-1785839903139-459",
+      "method": "UPI",
+      "amount": 1865,
+      "transactionId": "TXN7FCA0ABB",
+      "status": "success",
+      "createdAt": "2026-08-04T10:38:23.141Z"
+    },
+    {
+      "_id": "payment-1785839925846-924",
+      "user": "user-1785839684782-634",
+      "booking": "booking-1785839925845-440",
+      "method": "UPI",
+      "amount": 1865,
+      "transactionId": "TXN34F3163A",
+      "status": "success",
+      "createdAt": "2026-08-04T10:38:45.846Z"
+    },
+    {
+      "_id": "payment-1785840470680-839",
+      "user": "user-1785839684782-634",
+      "booking": "booking-1785840470678-778",
+      "method": "UPI",
+      "amount": 1865,
+      "transactionId": "TXN151BF737",
+      "status": "success",
+      "createdAt": "2026-08-04T10:47:50.680Z"
+    },
+    {
+      "_id": "payment-1785856196620-719",
+      "user": "user-1785839684782-634",
+      "booking": "booking-1785856196613-300",
+      "method": "UPI",
+      "amount": 820,
+      "transactionId": "TXNE0FD40D0",
+      "status": "success",
+      "createdAt": "2026-08-04T15:09:56.620Z"
+    },
+    {
+      "_id": "payment-1785856261772-537",
+      "user": "user-1785839684782-634",
+      "booking": "booking-1785856261769-3",
+      "method": "UPI",
+      "amount": 1865,
+      "transactionId": "TXN3C1D7144",
+      "status": "success",
+      "createdAt": "2026-08-04T15:11:01.772Z"
+    },
+    {
+      "_id": "payment-1785862113172-396",
+      "user": "user-admin",
+      "booking": "booking-1785862113169-989",
+      "method": "UPI",
+      "amount": 1865,
+      "transactionId": "TXN0FDAB5B5",
+      "status": "success",
+      "createdAt": "2026-08-04T16:48:33.172Z"
+    },
+    {
+      "_id": "payment-1785865922922-283",
+      "user": "user-1785839684782-634",
+      "booking": "booking-1785865922916-661",
+      "method": "UPI",
+      "amount": 1865,
+      "transactionId": "TXNEB0D1E9B",
+      "status": "success",
+      "createdAt": "2026-08-04T17:52:02.922Z"
+    }
+  ]
+}

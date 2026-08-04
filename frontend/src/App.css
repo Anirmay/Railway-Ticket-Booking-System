@@ -1,0 +1,19 @@
+body {
+  margin: 0;
+  font-family: Inter, system-ui, sans-serif;
+  background: #f8fafc;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+#root {
+  min-height: 100vh;
+}
