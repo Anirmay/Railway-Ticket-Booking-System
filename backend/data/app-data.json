@@ -121,7 +121,7 @@
       "departure": "08:00",
       "arrival": "20:30",
       "fare": 1865,
-      "seatsAvailable": 61,
+      "seatsAvailable": 59,
       "image": "https://images.unsplash.com/photo-1516008623956-7b68f2f4d6b1?auto=format&fit=crop&w=900&q=80",
       "route": "Delhi → Jaipur → Ahmedabad → Mumbai",
       "facilities": [
@@ -353,7 +353,7 @@
       "trainName": "Rajdhani Express",
       "source": "Delhi",
       "destination": "Mumbai",
-      "status": "confirmed",
+      "status": "cancelled",
       "paymentStatus": "paid",
       "createdAt": "2026-08-04T10:47:50.678Z"
     },
@@ -456,6 +456,46 @@
       "status": "confirmed",
       "paymentStatus": "paid",
       "createdAt": "2026-08-04T18:12:59.654Z"
+    },
+    {
+      "_id": "booking-1785870164917-444",
+      "user": "user-1785839684782-634",
+      "train": "train-1",
+      "passengerName": "",
+      "age": "",
+      "gender": "Male",
+      "seatPreference": "Window",
+      "seats": 1,
+      "pnr": "PNR923EB4F9",
+      "amount": 1865,
+      "coach": "A1",
+      "seatNumber": "15A",
+      "trainName": "Rajdhani Express",
+      "source": "Delhi",
+      "destination": "Mumbai",
+      "status": "confirmed",
+      "paymentStatus": "paid",
+      "createdAt": "2026-08-04T19:02:44.917Z"
+    },
+    {
+      "_id": "booking-1785870241685-648",
+      "user": "user-1785839684782-634",
+      "train": "train-1",
+      "passengerName": "",
+      "age": "",
+      "gender": "Male",
+      "seatPreference": "Window",
+      "seats": 1,
+      "pnr": "PNR95D50A8C",
+      "amount": 1865,
+      "coach": "A1",
+      "seatNumber": "3B",
+      "trainName": "Rajdhani Express",
+      "source": "Delhi",
+      "destination": "Mumbai",
+      "status": "confirmed",
+      "paymentStatus": "paid",
+      "createdAt": "2026-08-04T19:04:01.685Z"
     }
   ],
   "payments": [
@@ -538,6 +578,26 @@
       "transactionId": "TXNA9331A95",
       "status": "success",
       "createdAt": "2026-08-04T18:12:59.656Z"
+    },
+    {
+      "_id": "payment-1785870164922-17",
+      "user": "user-1785839684782-634",
+      "booking": "booking-1785870164917-444",
+      "method": "UPI",
+      "amount": 1865,
+      "transactionId": "TXNB81A2538",
+      "status": "success",
+      "createdAt": "2026-08-04T19:02:44.922Z"
+    },
+    {
+      "_id": "payment-1785870241688-242",
+      "user": "user-1785839684782-634",
+      "booking": "booking-1785870241685-648",
+      "method": "UPI",
+      "amount": 1865,
+      "transactionId": "TXND94BA749",
+      "status": "success",
+      "createdAt": "2026-08-04T19:04:01.688Z"
     }
   ]
 }

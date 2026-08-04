@@ -1,7 +1,7 @@
-import { BrowserRouter, Routes, Route, Link, NavLink, useNavigate, useParams, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link, NavLink, Navigate, useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { FaTrain, FaTicketAlt, FaShieldAlt, FaChartLine, FaCalendarAlt, FaMoneyBillWave, FaClipboardList, FaSearch, FaUserCircle, FaEnvelope, FaPhone, FaHandsHelping, FaCheck, FaReact, FaNodeJs, FaDatabase, FaLock, FaFacebook, FaInstagram, FaLinkedin, FaGithub, FaMapMarkerAlt, FaClock, FaLifeRing, FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import { FaTrain, FaTicketAlt, FaShieldAlt, FaChartLine, FaCalendarAlt, FaMoneyBillWave, FaClipboardList, FaSearch, FaUserCircle, FaEnvelope, FaPhone, FaHandsHelping, FaCheck, FaReact, FaNodeJs, FaDatabase, FaLock, FaFacebook, FaInstagram, FaLinkedin, FaGithub, FaMapMarkerAlt, FaClock, FaLifeRing, FaChevronDown, FaChevronUp, FaHistory } from 'react-icons/fa';
 import QRCode from 'react-qr-code';
 import './App.css';
 import Footer from './components/Footer.jsx';
@@ -36,21 +36,44 @@ function Layout({ children, user, logout }) {
               <FaTrain className="text-2xl" /> RailEase
             </Link>
             <div className="hidden items-center gap-6 md:flex">
-              <NavLink to="/" className="text-slate-600 hover:text-blue-700">Home</NavLink>
-              <NavLink to="/trains" className="text-slate-600 hover:text-blue-700">Trains</NavLink>
-              <NavLink to="/about" className="text-slate-600 hover:text-blue-700">About</NavLink>
-              <NavLink to="/contact" className="text-slate-600 hover:text-blue-700">Contact</NavLink>
-              {user && user.role === 'admin' && <NavLink to="/admin" className="text-slate-600 hover:text-blue-700">Admin</NavLink>}
+              <NavLink to="/" className={({ isActive }) => `nav-link-underline text-sm font-medium transition ${isActive ? 'active text-blue-700' : 'text-slate-600 hover:text-blue-700'}`}>
+                Home
+              </NavLink>
+              <NavLink to="/trains" className={({ isActive }) => `nav-link-underline text-sm font-medium transition ${isActive ? 'active text-blue-700' : 'text-slate-600 hover:text-blue-700'}`}>
+                Trains
+              </NavLink>
+              <NavLink to="/about" className={({ isActive }) => `nav-link-underline text-sm font-medium transition ${isActive ? 'active text-blue-700' : 'text-slate-600 hover:text-blue-700'}`}>
+                About
+              </NavLink>
+              <NavLink to="/contact" className={({ isActive }) => `nav-link-underline text-sm font-medium transition ${isActive ? 'active text-blue-700' : 'text-slate-600 hover:text-blue-700'}`}>
+                Contact
+              </NavLink>
+              {user && user.role === 'admin' && (
+                <NavLink to="/admin" className={({ isActive }) => `nav-link-underline text-sm font-medium transition ${isActive ? 'active text-blue-700' : 'text-slate-600 hover:text-blue-700'}`}>
+                  Admin
+                </NavLink>
+              )}
               {user ? (
                 <>
-                  <NavLink to="/bookings" className="text-slate-600 hover:text-blue-700">My Bookings</NavLink>
-                  <NavLink to="/dashboard" className="text-slate-600 hover:text-blue-700">Dashboard</NavLink>
+                  <NavLink to="/bookings" className={({ isActive }) => `nav-link-underline text-sm font-medium transition ${isActive ? 'active text-blue-700' : 'text-slate-600 hover:text-blue-700'}`}>
+                    My Bookings
+                  </NavLink>
+                  <NavLink to="/dashboard" className={({ isActive }) => `nav-link-underline text-sm font-medium transition ${isActive ? 'active text-blue-700' : 'text-slate-600 hover:text-blue-700'}`}>
+                    Dashboard
+                  </NavLink>
+                  <NavLink to="/profile" className={({ isActive }) => `nav-link-underline text-sm font-medium transition ${isActive ? 'active text-blue-700' : 'text-slate-600 hover:text-blue-700'}`}>
+                    Profile
+                  </NavLink>
                   <button onClick={logout} className="rounded-full bg-blue-600 px-4 py-2 text-white">Logout</button>
                 </>
               ) : (
                 <>
-                  <NavLink to="/login" className="text-slate-600 hover:text-blue-700">Login</NavLink>
-                  <NavLink to="/admin/login" className="text-slate-600 hover:text-blue-700">Admin Login</NavLink>
+                  <NavLink to="/login" className={({ isActive }) => `nav-link-underline text-sm font-medium transition ${isActive ? 'active text-blue-700' : 'text-slate-600 hover:text-blue-700'}`}>
+                    Login
+                  </NavLink>
+                  <NavLink to="/admin/login" className={({ isActive }) => `nav-link-underline text-sm font-medium transition ${isActive ? 'active text-blue-700' : 'text-slate-600 hover:text-blue-700'}`}>
+                    Admin Login
+                  </NavLink>
                   <NavLink to="/register" className="rounded-full bg-blue-600 px-4 py-2 text-white">Register</NavLink>
                 </>
               )}
@@ -94,7 +117,9 @@ function AdminLayout({ children, user, logout }) {
                     end={item.path === '/admin'}
                     className={({ isActive }) => `flex items-center rounded-3xl px-4 py-3 text-sm font-medium transition ${isActive ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-300 hover:bg-slate-900 hover:text-white'}`}
                   >
-                    {item.label}
+                    {({ isActive }) => (
+                      <span className={`nav-link-underline ${isActive ? 'active' : ''} ${item.path === '/admin' ? 'text-white' : ''}`}>{item.label}</span>
+                    )}
                   </NavLink>
                 ))}
               </nav>
@@ -429,6 +454,23 @@ function RequireAdmin({ user, children }) {
   return children;
 }
 
+function RequireAuth({ user, children }) {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+  if (!user) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 px-6 py-20 text-slate-700">
+        <div className="rounded-3xl border border-slate-200 bg-white px-8 py-10 shadow-lg">
+          <p className="text-center text-lg font-medium">Loading your profile...</p>
+        </div>
+      </div>
+    );
+  }
+  return children;
+}
+
 function PassengerDashboard({ user, bookings, trains }) {
   const cards = [
     { title: 'Total Bookings', value: bookings.length, icon: <FaClipboardList /> },
@@ -754,6 +796,8 @@ function TicketPage({ booking }) {
 }
 
 function MyBookingsPage({ bookings, onCancel }) {
+  const navigate = useNavigate();
+
   return (
     <div className="mx-auto max-w-7xl px-6 py-10">
       <div className="mb-6 rounded-3xl bg-white p-6 shadow-sm">
@@ -762,47 +806,154 @@ function MyBookingsPage({ bookings, onCancel }) {
             <h2 className="text-3xl font-semibold">My Bookings</h2>
             <p className="mt-2 text-slate-600">Review your reservations and cancel any ticket if needed.</p>
           </div>
+          <button onClick={() => navigate('/history')} className="inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700">
+            <FaHistory className="text-base" />
+            View History Page
+          </button>
         </div>
       </div>
       {bookings.length === 0 ? (
         <div className="rounded-3xl border border-slate-200 bg-white p-8 text-center text-slate-500">No bookings yet. Search trains and reserve your next journey.</div>
       ) : (
-        <div className="space-y-4">
-          {bookings.map((booking) => (
-            <div key={booking._id} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-              <div className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center">
-                <div>
-                  <h3 className="text-xl font-semibold">{booking.trainName}</h3>
-                  <p className="mt-1 text-slate-600">{booking.source} → {booking.destination}</p>
+        <div className="grid gap-6 lg:grid-cols-[1.8fr_1fr]">
+          <div className="space-y-4">
+            {bookings.map((booking) => (
+              <div key={booking._id} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                <div className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center">
+                  <div>
+                    <h3 className="text-xl font-semibold">{booking.trainName}</h3>
+                    <p className="mt-1 text-slate-600">{booking.source} → {booking.destination}</p>
+                  </div>
+                  <div className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-4 py-2 text-sm text-slate-600">{booking.status}</div>
                 </div>
-                <div className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-4 py-2 text-sm text-slate-600">{booking.status}</div>
+                <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                  <div className="rounded-3xl bg-slate-50 p-4 text-sm text-slate-600">
+                    <p className="font-semibold text-slate-900">PNR</p>
+                    <p>{booking.pnr}</p>
+                  </div>
+                  <div className="rounded-3xl bg-slate-50 p-4 text-sm text-slate-600">
+                    <p className="font-semibold text-slate-900">Date</p>
+                    <p>{booking.journeyDate}</p>
+                  </div>
+                  <div className="rounded-3xl bg-slate-50 p-4 text-sm text-slate-600">
+                    <p className="font-semibold text-slate-900">Seats</p>
+                    <p>{booking.seats}</p>
+                  </div>
+                  <div className="rounded-3xl bg-slate-50 p-4 text-sm text-slate-600">
+                    <p className="font-semibold text-slate-900">Amount</p>
+                    <p>₹{booking.amount}</p>
+                  </div>
+                </div>
+                <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-between">
+                  <div className="text-sm text-slate-500">Booked on {new Date(booking.createdAt).toLocaleDateString()}</div>
+                  <button onClick={() => onCancel(booking._id)} disabled={booking.status === 'cancelled'} className="rounded-2xl bg-red-600 px-4 py-3 text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-slate-300">Cancel Ticket</button>
+                </div>
               </div>
-              <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                <div className="rounded-3xl bg-slate-50 p-4 text-sm text-slate-600">
-                  <p className="font-semibold text-slate-900">PNR</p>
-                  <p>{booking.pnr}</p>
-                </div>
-                <div className="rounded-3xl bg-slate-50 p-4 text-sm text-slate-600">
-                  <p className="font-semibold text-slate-900">Date</p>
-                  <p>{booking.journeyDate}</p>
-                </div>
-                <div className="rounded-3xl bg-slate-50 p-4 text-sm text-slate-600">
-                  <p className="font-semibold text-slate-900">Seats</p>
-                  <p>{booking.seats}</p>
-                </div>
-                <div className="rounded-3xl bg-slate-50 p-4 text-sm text-slate-600">
-                  <p className="font-semibold text-slate-900">Amount</p>
-                  <p>₹{booking.amount}</p>
-                </div>
-              </div>
-              <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-between">
-                <div className="text-sm text-slate-500">Booked on {new Date(booking.createdAt).toLocaleDateString()}</div>
-                <button onClick={() => onCancel(booking._id)} disabled={booking.status === 'cancelled'} className="rounded-2xl bg-red-600 px-4 py-3 text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-slate-300">Cancel Ticket</button>
+            ))}
+          </div>
+          <aside className="space-y-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div className="flex items-center gap-3 border-b border-slate-200 pb-4">
+              <div className="rounded-2xl bg-blue-100 p-3 text-blue-700"><FaHistory /></div>
+              <div>
+                <h3 className="text-lg font-semibold">Booking History</h3>
+                <p className="text-sm text-slate-500">Quick overview of your past activity.</p>
               </div>
             </div>
-          ))}
+            <div className="grid gap-4">
+              <div className="rounded-3xl bg-slate-50 p-4">
+                <p className="text-sm text-slate-500">Total Bookings</p>
+                <p className="mt-2 text-2xl font-semibold text-slate-900">{bookings.length}</p>
+              </div>
+              <div className="rounded-3xl bg-slate-50 p-4">
+                <p className="text-sm text-slate-500">Confirmed</p>
+                <p className="mt-2 text-2xl font-semibold text-slate-900">{bookings.filter((booking) => booking.status === 'confirmed').length}</p>
+              </div>
+              <div className="rounded-3xl bg-slate-50 p-4">
+                <p className="text-sm text-slate-500">Cancelled</p>
+                <p className="mt-2 text-2xl font-semibold text-slate-900">{bookings.filter((booking) => booking.status === 'cancelled').length}</p>
+              </div>
+            </div>
+          </aside>
         </div>
       )}
+    </div>
+  );
+}
+
+function BookingHistoryPage({ bookings, onCancel }) {
+  const totalAmount = bookings.reduce((sum, booking) => sum + Number(booking.amount || 0), 0);
+  const confirmedCount = bookings.filter((booking) => booking.status === 'confirmed').length;
+  const cancelledCount = bookings.filter((booking) => booking.status === 'cancelled').length;
+
+  return (
+    <div className="mx-auto max-w-7xl px-6 py-10">
+      <div className="mb-6 rounded-3xl bg-white p-6 shadow-sm">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h2 className="text-3xl font-semibold">Booking History</h2>
+            <p className="mt-2 text-slate-600">A detailed history of your ride bookings, payments, and status updates.</p>
+          </div>
+          <div className="inline-flex items-center gap-2 rounded-full bg-blue-100 px-4 py-2 text-sm text-blue-700">
+            <FaHistory /> Full overview
+          </div>
+        </div>
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-3">
+        <div className="rounded-3xl bg-white p-6 shadow-sm">
+          <p className="text-sm text-slate-500">Total Bookings</p>
+          <p className="mt-4 text-3xl font-bold text-slate-900">{bookings.length}</p>
+        </div>
+        <div className="rounded-3xl bg-white p-6 shadow-sm">
+          <p className="text-sm text-slate-500">Confirmed</p>
+          <p className="mt-4 text-3xl font-bold text-slate-900">{confirmedCount}</p>
+        </div>
+        <div className="rounded-3xl bg-white p-6 shadow-sm">
+          <p className="text-sm text-slate-500">Cancelled</p>
+          <p className="mt-4 text-3xl font-bold text-slate-900">{cancelledCount}</p>
+        </div>
+      </div>
+
+      <div className="mt-8 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+        <table className="min-w-full text-left">
+          <thead className="bg-slate-100 text-sm uppercase text-slate-600">
+            <tr>
+              <th className="p-4">Train</th>
+              <th className="p-4">Route</th>
+              <th className="p-4">Date</th>
+              <th className="p-4">Status</th>
+              <th className="p-4">Amount</th>
+              <th className="p-4">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {bookings.map((booking) => (
+              <tr key={booking._id} className="border-t border-slate-200 hover:bg-slate-50">
+                <td className="p-4 font-semibold text-slate-900">{booking.trainName}</td>
+                <td className="p-4 text-slate-600">{booking.source} → {booking.destination}</td>
+                <td className="p-4 text-slate-600">{booking.journeyDate}</td>
+                <td className="p-4 text-slate-600">{booking.status}</td>
+                <td className="p-4 text-slate-900">₹{booking.amount}</td>
+                <td className="p-4">
+                  <button onClick={() => onCancel(booking._id)} disabled={booking.status === 'cancelled'} className="rounded-full bg-red-600 px-3 py-2 text-sm text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-slate-300">
+                    Cancel
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="mt-6 rounded-3xl bg-slate-50 p-6 shadow-sm">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div>
+            <p className="text-sm text-slate-500">Total spent on bookings</p>
+            <p className="mt-2 text-3xl font-bold text-slate-900">₹{totalAmount}</p>
+          </div>
+          <div className="rounded-3xl bg-white p-4 text-sm text-slate-600 shadow-sm">Manage and review your travel history all in one place.</div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -859,19 +1010,228 @@ function TopSuccessToast({ message }) {
 }
 
 function ProfilePage({ user, onUpdate }) {
-  const [form, setForm] = useState({ name: user?.name || '', email: user?.email || '', phone: user?.phone || '', password: '' });
+  const [form, setForm] = useState({ name: user?.name || '', username: user?.username || '', email: user?.email || '', phone: user?.phone || '', password: '' });
+  const [notifyEmail, setNotifyEmail] = useState(true);
+  const [notifySms, setNotifySms] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
+  const [autoFill, setAutoFill] = useState(true);
+  const [saveStatus, setSaveStatus] = useState('');
+  const [deleteOpen, setDeleteOpen] = useState(false);
+
+  useEffect(() => {
+    setForm({
+      name: user?.name || '',
+      username: user?.username || '',
+      email: user?.email || '',
+      phone: user?.phone || '',
+      password: '',
+    });
+  }, [user]);
+
+  const handleSave = async () => {
+    const payload = { ...form };
+    if (!payload.password) delete payload.password;
+    await onUpdate(payload);
+    setSaveStatus('Profile saved successfully.');
+    window.setTimeout(() => setSaveStatus(''), 3000);
+  };
+
+  const handleCancel = () => {
+    setForm({
+      name: user?.name || '',
+      username: user?.username || '',
+      email: user?.email || '',
+      phone: user?.phone || '',
+      password: '',
+    });
+    setSaveStatus('Changes discarded.');
+    window.setTimeout(() => setSaveStatus(''), 3000);
+  };
+
+  const loyaltyLevel = user?.role === 'admin' ? 'RailEase Admin' : 'Premium Traveller';
+  const memberSince = user?._id ? new Date(user._id.toString().slice(0, 8) * 1000).toLocaleDateString() : 'Unknown';
+
   return (
-    <div className="mx-auto max-w-4xl px-6 py-10">
-      <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-        <h2 className="text-2xl font-semibold">Profile</h2>
-        <div className="mt-6 grid gap-4 md:grid-cols-2">
-          <input className="rounded-2xl border border-slate-300 p-3" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Name" />
-          <input className="rounded-2xl border border-slate-300 p-3" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="Email" />
-          <input className="rounded-2xl border border-slate-300 p-3" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="Phone" />
-          <input className="rounded-2xl border border-slate-300 p-3" type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} placeholder="Password" />
+    <div className="mx-auto max-w-7xl px-6 py-10">
+      <div className="mb-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <p className="text-sm uppercase tracking-[0.24em] text-sky-600">Your Dashboard</p>
+            <h1 className="mt-2 text-3xl font-semibold text-slate-900">Welcome back, {user?.name || 'Traveller'}</h1>
+            <p className="mt-3 max-w-2xl text-sm text-slate-600">Manage your profile, booking preferences, security settings, and travel history from one central place.</p>
+          </div>
+          <div className="rounded-3xl bg-slate-50 p-4 text-sm text-slate-700 shadow-inner">
+            <div className="font-semibold text-slate-900">Account status</div>
+            <div className="mt-2 grid gap-2 sm:grid-cols-2">
+              <div className="rounded-2xl bg-white p-3 shadow-sm">
+                <p className="text-xs uppercase text-slate-500">Bookings</p>
+                <p className="mt-1 text-xl font-semibold text-slate-900">{user?.bookings?.length ?? '—'}</p>
+              </div>
+              <div className="rounded-2xl bg-white p-3 shadow-sm">
+                <p className="text-xs uppercase text-slate-500">Reward level</p>
+                <p className="mt-1 text-xl font-semibold text-slate-900">{loyaltyLevel}</p>
+              </div>
+            </div>
+          </div>
         </div>
-        <button onClick={() => onUpdate(form)} className="mt-6 rounded-2xl bg-blue-600 px-4 py-3 font-semibold text-white">Update Profile</button>
       </div>
+
+      <div className="grid gap-8 lg:grid-cols-[320px_1fr]">
+        <aside className="space-y-6">
+          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div className="flex items-center gap-4">
+              <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-blue-600 text-4xl text-white">{user?.name?.[0] ?? 'U'}</div>
+              <div>
+                <p className="text-xl font-semibold text-slate-900">{user?.name || 'Guest User'}</p>
+                <p className="text-sm text-slate-500">{user?.email || 'no-email@railease.com'}</p>
+              </div>
+            </div>
+            <div className="mt-6 space-y-3 text-sm text-slate-600">
+              <div className="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3">
+                <span>Username</span>
+                <span className="font-medium text-slate-900">{user?.username || 'unknown'}</span>
+              </div>
+              <div className="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3">
+                <span>Phone</span>
+                <span className="font-medium text-slate-900">{user?.phone || 'Not set'}</span>
+              </div>
+              <div className="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3">
+                <span>Member since</span>
+                <span className="font-medium text-slate-900">{memberSince}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h2 className="text-lg font-semibold text-slate-900">Preferences</h2>
+            <div className="mt-5 space-y-4 text-sm text-slate-600">
+              <label className="flex items-center justify-between gap-3 rounded-3xl bg-slate-50 px-4 py-4">
+                <span>Receive email updates</span>
+                <input type="checkbox" checked={notifyEmail} onChange={() => setNotifyEmail((prev) => !prev)} className="h-5 w-5 rounded border-slate-300 text-blue-600" />
+              </label>
+              <label className="flex items-center justify-between gap-3 rounded-3xl bg-slate-50 px-4 py-4">
+                <span>SMS alerts for journeys</span>
+                <input type="checkbox" checked={notifySms} onChange={() => setNotifySms((prev) => !prev)} className="h-5 w-5 rounded border-slate-300 text-blue-600" />
+              </label>
+              <label className="flex items-center justify-between gap-3 rounded-3xl bg-slate-50 px-4 py-4">
+                <span>Auto-complete passenger details</span>
+                <input type="checkbox" checked={autoFill} onChange={() => setAutoFill((prev) => !prev)} className="h-5 w-5 rounded border-slate-300 text-blue-600" />
+              </label>
+              <label className="flex items-center justify-between gap-3 rounded-3xl bg-slate-50 px-4 py-4">
+                <span>Dark mode</span>
+                <input type="checkbox" checked={darkMode} onChange={() => setDarkMode((prev) => !prev)} className="h-5 w-5 rounded border-slate-300 text-blue-600" />
+              </label>
+            </div>
+          </div>
+
+          <div className="rounded-3xl border border-rose-200 bg-rose-50 p-6 shadow-sm">
+            <h2 className="text-lg font-semibold text-rose-900">Danger Zone</h2>
+            <p className="mt-3 text-sm text-rose-700">Deleting your account will remove your profile and booking history from this demo project.</p>
+            <button onClick={() => setDeleteOpen(true)} className="mt-5 w-full rounded-2xl bg-rose-600 px-4 py-3 text-sm font-semibold text-white hover:bg-rose-700">Delete account</button>
+          </div>
+        </aside>
+
+        <div className="space-y-6">
+          <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+              <div>
+                <h2 className="text-2xl font-semibold text-slate-900">Personal information</h2>
+                <p className="mt-2 text-sm text-slate-600">Update your name, contact details, and account security in one place.</p>
+              </div>
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <button onClick={handleCancel} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50">Cancel</button>
+                <button onClick={handleSave} className="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-700">Save changes</button>
+              </div>
+            </div>
+            <div className="mt-6 grid gap-4 lg:grid-cols-2">
+              <div className="space-y-4">
+                <label className="block text-sm font-medium text-slate-700">Full name</label>
+                <input className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-blue-500" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Full name" />
+                <label className="block text-sm font-medium text-slate-700">Username</label>
+                <input className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-blue-500" value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} placeholder="Username" />
+                <label className="block text-sm font-medium text-slate-700">Email address</label>
+                <input className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-blue-500" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="Email address" />
+                <label className="block text-sm font-medium text-slate-700">Phone number</label>
+                <input className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-blue-500" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="Phone number" />
+              </div>
+              <div className="space-y-4 rounded-3xl border border-slate-100 bg-slate-50 p-5">
+                <div>
+                  <p className="text-sm font-medium text-slate-700">Security</p>
+                  <p className="mt-2 text-sm text-slate-500">Change your password and keep your account secure.</p>
+                </div>
+                <label className="block text-sm font-medium text-slate-700">New password</label>
+                <input className="w-full rounded-3xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none focus:border-blue-500" type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} placeholder="Leave blank to keep current password" />
+                <div className="rounded-3xl bg-white p-4 text-sm text-slate-600 shadow-sm">
+                  <p className="font-semibold text-slate-900">Password strength</p>
+                  <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-200">
+                    <div className={`h-full rounded-full ${form.password.length > 8 ? 'w-4/5 bg-emerald-500' : form.password.length > 4 ? 'w-1/2 bg-amber-400' : 'w-1/4 bg-rose-500'}`} />
+                  </div>
+                  <p className="mt-3 text-xs text-slate-500">Use at least 8 characters with numbers and letters for best security.</p>
+                </div>
+              </div>
+            </div>
+            {saveStatus ? <p className="mt-4 rounded-3xl bg-slate-50 px-4 py-3 text-sm text-slate-700">{saveStatus}</p> : null}
+          </section>
+
+          <section className="grid gap-6 lg:grid-cols-2">
+            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold text-slate-900">Latest travel summary</h3>
+                  <p className="mt-2 text-sm text-slate-600">Quick insight into your recent journeys and status.</p>
+                </div>
+                <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">Active</span>
+              </div>
+              <div className="mt-6 grid gap-4">
+                <div className="rounded-3xl bg-slate-50 p-4">
+                  <p className="text-sm text-slate-500">Next departure</p>
+                  <p className="mt-2 text-xl font-semibold text-slate-900">Delhi → Mumbai</p>
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="rounded-3xl bg-slate-50 p-4">
+                    <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Upcoming tickets</p>
+                    <p className="mt-2 text-2xl font-semibold text-slate-900">2</p>
+                  </div>
+                  <div className="rounded-3xl bg-slate-50 p-4">
+                    <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Travel credits</p>
+                    <p className="mt-2 text-2xl font-semibold text-slate-900">₹450</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <h3 className="text-lg font-semibold text-slate-900">Recent bookings</h3>
+              <p className="mt-2 text-sm text-slate-600">Review your latest journey snapshots.</p>
+              <div className="mt-6 space-y-3">
+                <div className="rounded-3xl bg-slate-50 p-4">
+                  <p className="text-sm text-slate-500">PNR: 4582-91</p>
+                  <p className="mt-2 font-semibold text-slate-900">Kolkata → New Delhi • 12 Aug</p>
+                </div>
+                <div className="rounded-3xl bg-slate-50 p-4">
+                  <p className="text-sm text-slate-500">PNR: 7391-06</p>
+                  <p className="mt-2 font-semibold text-slate-900">Hyderabad → Vijayawada • 27 Sep</p>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      {deleteOpen ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 px-4 py-6">
+          <div className="w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl">
+            <h2 className="text-2xl font-semibold text-rose-700">Confirm account deletion</h2>
+            <p className="mt-4 text-sm text-slate-600">This action cannot be undone. Your profile settings and demo data will be removed from the current session.</p>
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-end">
+              <button onClick={() => setDeleteOpen(false)} className="rounded-2xl border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50">Keep account</button>
+              <button onClick={() => {
+                setDeleteOpen(false);
+                setSaveStatus('Account deletion request sent.');
+              }} className="rounded-2xl bg-rose-600 px-4 py-3 text-sm font-semibold text-white hover:bg-rose-700">Delete account</button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -1128,11 +1488,6 @@ function PaymentSuccessPage({ bookingInfo, ticket }) {
       </div>
     </div>
   );
-}
-
-// Alias booking history route
-function BookingHistoryPage({ bookings, onCancel }) {
-  return <MyBookingsPage bookings={bookings} onCancel={onCancel} />;
 }
 
 /* ------------------ Admin Pages (scaffold) ------------------ */
@@ -1592,7 +1947,7 @@ function App() {
       <Route path="/admin/reports" element={<RequireAdmin user={user}><AdminLayout user={user} logout={logout}><Reports /></AdminLayout></RequireAdmin>} />
       <Route path="/bookings" element={<Layout user={user} logout={logout}><MyBookingsPage bookings={bookings} onCancel={handleCancelBooking} /></Layout>} />
       <Route path="/dashboard" element={<Layout user={user} logout={logout}><PassengerDashboard user={user} bookings={bookings} trains={trains} /></Layout>} />
-      <Route path="/profile" element={<Layout user={user} logout={logout}><ProfilePage user={user} onUpdate={handleUpdateProfile} /></Layout>} />
+      <Route path="/profile" element={<RequireAuth user={user}><Layout user={user} logout={logout}><ProfilePage user={user} onUpdate={handleUpdateProfile} /></Layout></RequireAuth>} />
       <Route path="/about" element={<Layout user={user} logout={logout}><AboutPage /></Layout>} />
       <Route path="/contact" element={<Layout user={user} logout={logout}><ContactPage /></Layout>} />
       <Route path="*" element={<Layout user={user} logout={logout}><NotFoundPage /></Layout>} />
