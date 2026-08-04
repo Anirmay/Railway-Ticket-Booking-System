@@ -146,21 +146,54 @@ function loadState() {
 function ensureDefaultAdmin() {
   const currentState = getState();
   const adminUser = currentState.users.find((user) => user.username === 'admin');
+  const defaultAdminData = {
+    name: 'Anirmay Khan',
+    email: 'admin@railease.com',
+    phone: '+91 8367833266',
+    role: 'admin',
+    status: 'active',
+    department: 'Railway Administration',
+    profilePhoto: '',
+    address: 'RailEase Headquarters',
+    city: 'Bardhaman',
+    state: 'West Bengal',
+    country: 'India',
+    pinCode: '713101',
+    employeeId: 'ADM-1001',
+    memberSince: 'January 2026',
+    lastLogin: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    notifications: {
+      booking: true,
+      payment: true,
+      userRegistration: true,
+      refund: true,
+      reports: true,
+      email: true,
+    },
+  };
+
   if (!adminUser) {
     const passwordHash = bcrypt.hashSync('admin123', 10);
     currentState.users.push({
       _id: createId('user'),
-      name: 'Administrator',
       username: 'admin',
-      email: 'admin@railease.com',
-      phone: '0000000000',
       password: passwordHash,
-      role: 'admin',
-      status: 'active',
       createdAt: formatDate(-365),
+      ...defaultAdminData,
     });
     saveState();
+    return;
   }
+
+  let updated = false;
+  Object.entries(defaultAdminData).forEach(([key, value]) => {
+    if (adminUser[key] === undefined || adminUser[key] === null) {
+      adminUser[key] = value;
+      updated = true;
+    }
+  });
+  if (updated) saveState();
 }
 
 function ensureDemoData() {
@@ -340,6 +373,9 @@ function getDashboardStats() {
   const pendingPayments = payments.filter((payment) => payment.status === 'pending').length;
   const activeTrains = currentState.trains.filter((train) => train.status === 'active').length;
   const revenue = payments.reduce((sum, payment) => sum + Number(payment.amount || 0), 0);
+  const paymentsProcessed = payments.filter((payment) => payment.status === 'success').length;
+  const reportsGenerated = Object.keys(getReports().monthly).length;
+  const refundRequests = payments.filter((payment) => payment.status === 'pending' || payment.status === 'failed').length;
   return {
     totalUsers: users.length,
     totalTrains: currentState.trains.length,
@@ -349,6 +385,9 @@ function getDashboardStats() {
     revenue,
     pendingPayments,
     activeTrains,
+    paymentsProcessed,
+    reportsGenerated,
+    refundRequests,
   };
 }
 

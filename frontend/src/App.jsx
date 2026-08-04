@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Link, NavLink, Navigate, useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { FaTrain, FaTicketAlt, FaShieldAlt, FaChartLine, FaCalendarAlt, FaMoneyBillWave, FaClipboardList, FaSearch, FaUserCircle, FaEnvelope, FaPhone, FaHandsHelping, FaCheck, FaReact, FaNodeJs, FaDatabase, FaLock, FaFacebook, FaInstagram, FaLinkedin, FaGithub, FaMapMarkerAlt, FaClock, FaLifeRing, FaChevronDown, FaChevronUp, FaHistory } from 'react-icons/fa';
+import { FaTrain, FaTicketAlt, FaShieldAlt, FaChartLine, FaCalendarAlt, FaMoneyBillWave, FaClipboardList, FaSearch, FaUserCircle, FaEnvelope, FaPhone, FaHandsHelping, FaCheck, FaUsers, FaReact, FaNodeJs, FaDatabase, FaLock, FaFacebook, FaInstagram, FaLinkedin, FaGithub, FaMapMarkerAlt, FaClock, FaLifeRing, FaChevronDown, FaChevronUp, FaHistory } from 'react-icons/fa';
 import QRCode from 'react-qr-code';
 import './App.css';
 import Footer from './components/Footer.jsx';
@@ -125,13 +125,16 @@ function AdminLayout({ children, user, logout }) {
               </nav>
             </div>
             <div className="border-t border-slate-800 px-6 py-6">
-              <div className="flex items-center gap-3 rounded-3xl bg-slate-900 p-4">
-                <div className="rounded-2xl bg-blue-600 p-3 text-white"><FaUserCircle /></div>
-                <div>
-                  <p className="text-sm text-slate-300">Signed in as</p>
-                  <p className="font-semibold text-white">{user?.name || 'Admin'}</p>
+              <Link to="/admin/profile" className="group block rounded-3xl bg-slate-900 p-4 transition hover:bg-slate-800">
+                <div className="flex items-center gap-3">
+                  <div className="rounded-2xl bg-blue-600 p-3 text-white"><FaUserCircle /></div>
+                  <div>
+                    <p className="text-sm text-slate-300">Signed in as</p>
+                    <p className="font-semibold text-white">{user?.name || 'Admin'}</p>
+                  </div>
                 </div>
-              </div>
+                <p className="mt-3 text-sm text-slate-400 group-hover:text-white">View profile and account settings</p>
+              </Link>
               <button onClick={logout} className="mt-5 w-full rounded-3xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-500">Sign Out</button>
             </div>
           </div>
@@ -1579,6 +1582,451 @@ function AdminDashboard() {
   );
 }
 
+function AdminProfilePage({ user }) {
+  const [profile, setProfile] = useState({
+    name: user?.name || '',
+    username: user?.username || '',
+    email: user?.email || '',
+    phone: user?.phone || '',
+    address: user?.address || '',
+    city: user?.city || 'Bardhaman',
+    state: user?.state || 'West Bengal',
+    country: user?.country || 'India',
+    pinCode: user?.pinCode || '713101',
+    department: user?.department || 'Railway Administration',
+    employeeId: user?.employeeId || 'ADM-1001',
+    memberSince: user?.memberSince || 'January 2026',
+    lastLogin: user?.lastLogin || new Date().toLocaleString(),
+    role: user?.role || 'Super Administrator',
+    status: user?.status || 'Active',
+    profilePhoto: user?.profilePhoto || '',
+    dob: user?.dob || '1995-06-14',
+    gender: user?.gender || 'Male',
+    notifications: user?.notifications || {
+      booking: true,
+      payment: true,
+      userRegistration: true,
+      refund: true,
+      reports: true,
+      email: true,
+    },
+  });
+  const [loading, setLoading] = useState(true);
+  const [editMode, setEditMode] = useState(false);
+  const [toast, setToast] = useState('');
+  const [passwordData, setPasswordData] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
+  const [showPassword, setShowPassword] = useState(false);
+  const [stats, setStats] = useState({ totalTrains: 0, totalUsers: 0, totalBookings: 0, paymentsProcessed: 0, reportsGenerated: 0, refundRequests: 0 });
+  const [activity] = useState([
+    { label: 'Added Train', description: 'Express line added to system', time: 'Today 10:45 AM', status: 'Success' },
+    { label: 'Updated Train Schedule', description: 'Route timings refreshed', time: 'Yesterday 4:20 PM', status: 'Success' },
+    { label: 'Approved Refund', description: 'Refund approved for booking PNR1234', time: '2 days ago', status: 'Success' },
+    { label: 'Deleted User', description: 'Removed suspended user account', time: '3 days ago', status: 'Success' },
+    { label: 'Generated Report', description: 'Monthly revenue report created', time: '4 days ago', status: 'Success' },
+    { label: 'Updated Booking', description: 'Booking details modified for PNR5678', time: '5 days ago', status: 'Success' },
+  ]);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    setLoading(true);
+    fetch(`${API}/admin/profile`, { headers: { Authorization: `Bearer ${token}` } })
+      .then((res) => res.json())
+      .then((data) => {
+        setProfile((prev) => ({
+          ...prev,
+          ...data,
+          profilePhoto: data.profilePhoto || prev.profilePhoto,
+          notifications: data.notifications || prev.notifications,
+          employeeId: data.employeeId || prev.employeeId,
+          memberSince: data.memberSince || prev.memberSince,
+          lastLogin: data.lastLogin || prev.lastLogin,
+          department: data.department || prev.department,
+        }));
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+
+    fetch(`${API}/admin/dashboard`, { headers: { Authorization: `Bearer ${token}` } })
+      .then((res) => res.json())
+      .then((data) => setStats({
+        totalTrains: data.totalTrains || 0,
+        totalUsers: data.totalUsers || 0,
+        totalBookings: data.totalBookings || 0,
+        paymentsProcessed: data.paymentsProcessed || 0,
+        reportsGenerated: data.reportsGenerated || 0,
+        refundRequests: data.refundRequests || 0,
+      }))
+      .catch(() => {});
+  }, [user]);
+
+  const showToast = (message) => {
+    setToast(message);
+    window.setTimeout(() => setToast(''), 3000);
+  };
+
+  const handleProfileSave = async () => {
+    if (!profile.name || !profile.username || !profile.email || !profile.phone || !profile.address) {
+      showToast('Please fill in all required fields.');
+      return;
+    }
+    const token = localStorage.getItem('token');
+    const res = await fetch(`${API}/admin/profile`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({
+        name: profile.name,
+        username: profile.username,
+        email: profile.email,
+        phone: profile.phone,
+        address: profile.address,
+        city: profile.city,
+        state: profile.state,
+        country: profile.country,
+        pinCode: profile.pinCode,
+      }),
+    });
+    if (res.ok) {
+      showToast('Profile changes saved successfully.');
+      setEditMode(false);
+    } else {
+      showToast('Unable to save profile changes.');
+    }
+  };
+
+  const handlePasswordUpdate = async () => {
+    if (!passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
+      showToast('Please complete all password fields.');
+      return;
+    }
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      showToast('New password and confirmation do not match.');
+      return;
+    }
+    if (passwordData.newPassword.length < 6) {
+      showToast('Password must be at least 6 characters.');
+      return;
+    }
+    const token = localStorage.getItem('token');
+    const res = await fetch(`${API}/admin/change-password`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ currentPassword: passwordData.currentPassword, newPassword: passwordData.newPassword }),
+    });
+    if (res.ok) {
+      showToast('Password updated successfully.');
+      setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+    } else {
+      const error = await res.json();
+      showToast(error.message || 'Password update failed.');
+    }
+  };
+
+  const handleNotificationSave = async () => {
+    const token = localStorage.getItem('token');
+    const res = await fetch(`${API}/admin/profile`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ notifications: profile.notifications }),
+    });
+    if (res.ok) {
+      showToast('Notification settings saved.');
+    } else {
+      showToast('Failed to save notification settings.');
+    }
+  };
+
+  const handleUploadPhoto = async (file) => {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${API}/admin/upload-photo`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ photoBase64: reader.result }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setProfile((prev) => ({ ...prev, profilePhoto: data.profilePhoto || prev.profilePhoto }));
+        showToast('Profile photo updated.');
+      } else {
+        showToast('Photo upload failed.');
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const statsCards = [
+    { label: 'Total Trains Managed', value: stats.totalTrains, icon: <FaTrain className="text-xl text-blue-600" /> },
+    { label: 'Total Users', value: stats.totalUsers, icon: <FaUsers className="text-xl text-slate-700" /> },
+    { label: 'Total Bookings', value: stats.totalBookings, icon: <FaClipboardList className="text-xl text-emerald-600" /> },
+    { label: 'Payments Processed', value: stats.paymentsProcessed, icon: <FaMoneyBillWave className="text-xl text-orange-600" /> },
+    { label: 'Reports Generated', value: stats.reportsGenerated, icon: <FaChartLine className="text-xl text-violet-600" /> },
+    { label: 'Refund Requests', value: stats.refundRequests, icon: <FaShieldAlt className="text-xl text-red-600" /> },
+  ];
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div className="h-36 rounded-3xl bg-slate-200 animate-pulse" />
+        <div className="grid gap-6 lg:grid-cols-3">
+          {Array.from({ length: 3 }).map((_, idx) => (
+            <div key={idx} className="h-40 rounded-3xl bg-slate-200 animate-pulse" />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-8">
+      {toast ? (
+        <div className="rounded-3xl bg-emerald-600 px-5 py-4 text-white shadow-lg">{toast}</div>
+      ) : null}
+
+      <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex items-center gap-5">
+            <div className="relative">
+              <div className="h-28 w-28 overflow-hidden rounded-full bg-slate-100 shadow-inner">
+                {profile.profilePhoto ? (
+                  <img src={profile.profilePhoto} alt="Admin profile" className="h-full w-full object-cover" />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center bg-slate-200 text-4xl text-slate-600">{profile.name?.[0] || 'A'}</div>
+                )}
+              </div>
+              <label className="absolute bottom-0 right-0 cursor-pointer rounded-full bg-blue-600 p-2 text-white shadow-lg hover:bg-blue-500">
+                <input type="file" className="hidden" accept="image/*" onChange={(event) => handleUploadPhoto(event.target.files?.[0])} />
+                <FaUserCircle />
+              </label>
+            </div>
+            <div>
+              <p className="text-sm uppercase tracking-[0.24em] text-slate-500">Profile</p>
+              <h1 className="text-3xl font-semibold text-slate-900">{profile.name}</h1>
+              <div className="mt-2 flex flex-wrap gap-2 text-sm text-slate-600">
+                <span className="rounded-full bg-slate-100 px-3 py-1">Administrator Badge</span>
+                <span className="rounded-full bg-blue-100 px-3 py-1 text-blue-700">{profile.role}</span>
+              </div>
+            </div>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div className="rounded-3xl bg-slate-50 p-4">
+              <p className="text-sm text-slate-500">Employee ID</p>
+              <p className="mt-2 text-lg font-semibold text-slate-900">{profile.employeeId}</p>
+            </div>
+            <div className="rounded-3xl bg-slate-50 p-4">
+              <p className="text-sm text-slate-500">Account Status</p>
+              <p className="mt-2 text-lg font-semibold text-emerald-700">{profile.status}</p>
+            </div>
+          </div>
+        </div>
+        <div className="mt-6 grid gap-4 sm:grid-cols-2">
+          <div className="rounded-3xl bg-slate-50 p-5">
+            <p className="text-xs uppercase tracking-[0.24em] text-slate-500">Email</p>
+            <p className="mt-2 text-sm font-medium text-slate-900">{profile.email}</p>
+          </div>
+          <div className="rounded-3xl bg-slate-50 p-5">
+            <p className="text-xs uppercase tracking-[0.24em] text-slate-500">Phone</p>
+            <p className="mt-2 text-sm font-medium text-slate-900">{profile.phone}</p>
+          </div>
+          <div className="rounded-3xl bg-slate-50 p-5">
+            <p className="text-xs uppercase tracking-[0.24em] text-slate-500">Department</p>
+            <p className="mt-2 text-sm font-medium text-slate-900">{profile.department}</p>
+          </div>
+          <div className="rounded-3xl bg-slate-50 p-5">
+            <p className="text-xs uppercase tracking-[0.24em] text-slate-500">Last Login</p>
+            <p className="mt-2 text-sm font-medium text-slate-900">{profile.lastLogin}</p>
+          </div>
+        </div>
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-sm text-slate-600">Member since</p>
+            <p className="text-lg font-semibold text-slate-900">{profile.memberSince}</p>
+          </div>
+          <button onClick={() => setEditMode(true)} className="rounded-3xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700">Edit Profile</button>
+        </div>
+      </div>
+
+      <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
+        <div className="space-y-6">
+          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-xl font-semibold text-slate-900">Personal Information</h2>
+                <p className="mt-2 text-sm text-slate-600">Manage your administrator profile details.</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <button onClick={() => setEditMode(!editMode)} className="rounded-full border border-slate-300 px-4 py-2 text-sm text-slate-700 hover:bg-slate-100">{editMode ? 'View' : 'Edit'}</button>
+              </div>
+            </div>
+            <div className="mt-6 grid gap-4 sm:grid-cols-2">
+              {[
+                { label: 'Full Name', value: profile.name, key: 'name', type: 'text' },
+                { label: 'Username', value: profile.username, key: 'username', type: 'text' },
+                { label: 'Email', value: profile.email, key: 'email', type: 'email' },
+                { label: 'Mobile Number', value: profile.phone, key: 'phone', type: 'tel' },
+                { label: 'Date of Birth', value: profile.dob, key: 'dob', type: 'date' },
+                { label: 'Gender', value: profile.gender, key: 'gender', type: 'text' },
+                { label: 'Address', value: profile.address, key: 'address', type: 'text', full: true },
+                { label: 'City', value: profile.city, key: 'city', type: 'text' },
+                { label: 'State', value: profile.state, key: 'state', type: 'text' },
+                { label: 'Country', value: profile.country, key: 'country', type: 'text' },
+                { label: 'PIN Code', value: profile.pinCode, key: 'pinCode', type: 'text' },
+              ].map((field) => (
+                <div key={field.key} className={field.full ? 'sm:col-span-2' : ''}>
+                  <label className="block text-sm font-medium text-slate-700">{field.label}</label>
+                  {editMode ? (
+                    <input
+                      className="mt-2 w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-blue-500"
+                      type={field.type}
+                      value={profile[field.key]}
+                      onChange={(e) => setProfile({ ...profile, [field.key]: e.target.value })}
+                    />
+                  ) : (
+                    <p className="mt-2 rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">{field.value}</p>
+                  )}
+                </div>
+              ))}
+            </div>
+            {editMode ? (
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-end">
+                <button onClick={() => { setProfile({ ...profile, name: user?.name || profile.name, username: user?.username || profile.username, email: user?.email || profile.email, phone: user?.phone || profile.phone }); setEditMode(false); }} className="rounded-2xl border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50">Cancel</button>
+                <button onClick={handleProfileSave} className="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-700">Save Changes</button>
+              </div>
+            ) : null}
+          </div>
+
+          <div className="grid gap-6 lg:grid-cols-2">
+            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <h3 className="text-lg font-semibold text-slate-900">Account Information</h3>
+              <div className="mt-6 space-y-4 text-sm text-slate-600">
+                {[
+                  { label: 'Admin ID', value: profile.employeeId },
+                  { label: 'Role', value: profile.role },
+                  { label: 'Department', value: profile.department },
+                  { label: 'Created Account', value: profile.memberSince },
+                  { label: 'Last Updated', value: profile.updatedAt ? new Date(profile.updatedAt).toLocaleDateString() : 'N/A' },
+                  { label: 'Account Status', value: profile.status },
+                ].map((item) => (
+                  <div key={item.label} className="rounded-3xl bg-slate-50 p-4">
+                    <p className="text-xs uppercase tracking-[0.2em] text-slate-500">{item.label}</p>
+                    <p className="mt-2 text-sm font-semibold text-slate-900">{item.value}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <h3 className="text-lg font-semibold text-slate-900">Dashboard Statistics</h3>
+              <div className="mt-6 grid gap-4">
+                {statsCards.map((item) => (
+                  <div key={item.label} className="rounded-3xl bg-slate-50 p-4">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="rounded-2xl bg-white p-3 shadow-sm">{item.icon}</div>
+                      <p className="text-sm text-slate-500">{item.label}</p>
+                    </div>
+                    <p className="mt-4 text-3xl font-semibold text-slate-900">{item.value}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="grid gap-6 lg:grid-cols-2">
+            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <h3 className="text-lg font-semibold text-slate-900">Security Settings</h3>
+              <div className="mt-6 space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700">Current Password</label>
+                  <input type={showPassword ? 'text' : 'password'} className="mt-2 w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-blue-500" value={passwordData.currentPassword} onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })} />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700">New Password</label>
+                  <input type={showPassword ? 'text' : 'password'} className="mt-2 w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-blue-500" value={passwordData.newPassword} onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })} />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700">Confirm Password</label>
+                  <input type={showPassword ? 'text' : 'password'} className="mt-2 w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-blue-500" value={passwordData.confirmPassword} onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })} />
+                </div>
+                <div className="flex items-center gap-3">
+                  <input id="show-password" type="checkbox" checked={showPassword} onChange={() => setShowPassword((prev) => !prev)} className="h-4 w-4 rounded border-slate-300 text-blue-600" />
+                  <label htmlFor="show-password" className="text-sm text-slate-600">Show password</label>
+                </div>
+                <div className="rounded-3xl bg-slate-50 p-4 text-sm text-slate-600">
+                  <p className="font-semibold text-slate-900">Password Strength</p>
+                  <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-200">
+                    <div className={`h-full rounded-full ${passwordData.newPassword.length > 8 ? 'w-4/5 bg-emerald-500' : passwordData.newPassword.length > 4 ? 'w-1/2 bg-amber-400' : 'w-1/4 bg-rose-500'}`} />
+                  </div>
+                </div>
+                <button onClick={handlePasswordUpdate} className="rounded-3xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-700">Update Password</button>
+              </div>
+            </div>
+
+            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <h3 className="text-lg font-semibold text-slate-900">Notification Settings</h3>
+              <div className="mt-6 space-y-4 text-sm text-slate-700">
+                {[
+                  { label: 'Booking Notifications', key: 'booking' },
+                  { label: 'Payment Notifications', key: 'payment' },
+                  { label: 'User Registration Alerts', key: 'userRegistration' },
+                  { label: 'Refund Alerts', key: 'refund' },
+                  { label: 'Report Notifications', key: 'reports' },
+                  { label: 'Email Notifications', key: 'email' },
+                ].map((item) => (
+                  <label key={item.key} className="flex items-center justify-between rounded-3xl bg-slate-50 px-4 py-4">
+                    <span>{item.label}</span>
+                    <input type="checkbox" checked={profile.notifications[item.key]} onChange={() => setProfile((prev) => ({ ...prev, notifications: { ...prev.notifications, [item.key]: !prev.notifications[item.key] } }))} className="h-5 w-5 rounded border-slate-300 text-blue-600" />
+                  </label>
+                ))}
+              </div>
+              <button onClick={handleNotificationSave} className="mt-6 rounded-3xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-700">Save Settings</button>
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div className="flex items-center justify-between">
+              <h3 className="text-xl font-semibold text-slate-900">Recent Admin Activity</h3>
+              <span className="text-sm text-slate-500">Latest actions</span>
+            </div>
+            <div className="mt-6 space-y-4">
+              {activity.map((item) => (
+                <div key={item.label} className="rounded-3xl bg-slate-50 p-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <p className="font-semibold text-slate-900">{item.label}</p>
+                      <p className="mt-2 text-sm text-slate-600">{item.description}</p>
+                    </div>
+                    <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">{item.status}</span>
+                  </div>
+                  <p className="mt-3 text-xs text-slate-500">{item.time}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h3 className="text-xl font-semibold text-slate-900">Quick Actions</h3>
+            <div className="mt-6 grid gap-3 sm:grid-cols-2">
+              {[
+                { label: 'Manage Trains', path: '/admin/trains' },
+                { label: 'Manage Users', path: '/admin/users' },
+                { label: 'Manage Bookings', path: '/admin/bookings' },
+                { label: 'View Reports', path: '/admin/reports' },
+                { label: 'Dashboard', path: '/admin' },
+              ].map((action) => (
+                <Link key={action.path} to={action.path} className="rounded-3xl border border-slate-200 bg-slate-50 px-4 py-4 text-sm font-semibold text-slate-900 transition hover:bg-blue-50">{action.label}</Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function ManageTrains() {
   const [trainsList, setTrainsList] = useState([]);
   useEffect(() => { fetch(`${API}/trains`).then((r) => r.json()).then(setTrainsList).catch(() => setTrainsList([])); }, []);
@@ -1634,15 +2082,34 @@ function AddTrain() {
     navigate('/admin/trains');
   };
   return (
-    <div className="mx-auto max-w-3xl px-6 py-10">
+    <div className="mx-auto max-w-5xl px-6 py-10">
       <h3 className="text-2xl font-semibold">Add Train</h3>
-      <div className="mt-4 grid gap-3">
-        <input className="rounded-2xl border p-3" placeholder="Name" value={form.name} onChange={e=>setForm({...form,name:e.target.value})} />
-        <input className="rounded-2xl border p-3" placeholder="Source" value={form.source} onChange={e=>setForm({...form,source:e.target.value})} />
-        <input className="rounded-2xl border p-3" placeholder="Destination" value={form.destination} onChange={e=>setForm({...form,destination:e.target.value})} />
-        <input type="number" className="rounded-2xl border p-3" placeholder="Seats" value={form.seatsAvailable} onChange={e=>setForm({...form,seatsAvailable:Number(e.target.value)})} />
-        <input type="number" className="rounded-2xl border p-3" placeholder="Fare" value={form.fare} onChange={e=>setForm({...form,fare:Number(e.target.value)})} />
-        <div className="flex justify-end"><button onClick={save} className="rounded-2xl bg-blue-600 px-4 py-2 text-white">Save</button></div>
+      <div className="mt-6">
+        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="mt-4 grid gap-4">
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-[180px_1fr] sm:items-center">
+              <label className="text-sm font-semibold text-slate-700">Train name</label>
+              <input className="w-full rounded-2xl border border-slate-300 bg-slate-50 p-3" placeholder="Write train name" value={form.name} onChange={e=>setForm({...form,name:e.target.value})} />
+            </div>
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-[180px_1fr] sm:items-center">
+              <label className="text-sm font-semibold text-slate-700">Source station</label>
+              <input className="w-full rounded-2xl border border-slate-300 bg-slate-50 p-3" placeholder="Write source station" value={form.source} onChange={e=>setForm({...form,source:e.target.value})} />
+            </div>
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-[180px_1fr] sm:items-center">
+              <label className="text-sm font-semibold text-slate-700">Destination station</label>
+              <input className="w-full rounded-2xl border border-slate-300 bg-slate-50 p-3" placeholder="Write destination station" value={form.destination} onChange={e=>setForm({...form,destination:e.target.value})} />
+            </div>
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-[180px_1fr] sm:items-center">
+              <label className="text-sm font-semibold text-slate-700">Seats available</label>
+              <input type="number" className="w-full rounded-2xl border border-slate-300 bg-slate-50 p-3" placeholder="Write seats available" value={form.seatsAvailable} onChange={e=>setForm({...form,seatsAvailable:Number(e.target.value)})} />
+            </div>
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-[180px_1fr] sm:items-center">
+              <label className="text-sm font-semibold text-slate-700">Fare (₹)</label>
+              <input type="number" className="w-full rounded-2xl border border-slate-300 bg-slate-50 p-3" placeholder="Write fare in rupees" value={form.fare} onChange={e=>setForm({...form,fare:Number(e.target.value)})} />
+            </div>
+            <div className="flex justify-end"><button onClick={save} className="rounded-2xl bg-blue-600 px-4 py-2 text-white">Save</button></div>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -1938,6 +2405,7 @@ function App() {
       <Route path="/history" element={<Layout user={user} logout={logout}><BookingHistoryPage bookings={bookings} onCancel={handleCancelBooking} /></Layout>} />
       {/* Admin routes */}
       <Route path="/admin" element={<RequireAdmin user={user}><AdminLayout user={user} logout={logout}><AdminDashboard /></AdminLayout></RequireAdmin>} />
+      <Route path="/admin/profile" element={<RequireAdmin user={user}><AdminLayout user={user} logout={logout}><AdminProfilePage user={user} /></AdminLayout></RequireAdmin>} />
       <Route path="/admin/trains" element={<RequireAdmin user={user}><AdminLayout user={user} logout={logout}><ManageTrains /></AdminLayout></RequireAdmin>} />
       <Route path="/admin/trains/add" element={<RequireAdmin user={user}><AdminLayout user={user} logout={logout}><AddTrain /></AdminLayout></RequireAdmin>} />
       <Route path="/admin/trains/:id/edit" element={<RequireAdmin user={user}><AdminLayout user={user} logout={logout}><EditTrain /></AdminLayout></RequireAdmin>} />

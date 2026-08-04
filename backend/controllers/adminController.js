@@ -41,3 +41,53 @@ exports.getReports = async (req, res) => {
     res.status(500).json({ message: 'Reports failed', error: error.message });
   }
 };
+
+exports.getAdminProfile = async (req, res) => {
+  res.json(req.user);
+};
+
+exports.updateAdminProfile = async (req, res) => {
+  try {
+    const updates = { ...req.body };
+    delete updates.password;
+    const user = storage.updateUser(req.user._id, { ...updates, updatedAt: new Date().toISOString() });
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: 'Admin profile update failed', error: error.message });
+  }
+};
+
+exports.changeAdminPassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: 'Both current and new password are required' });
+    }
+
+    const existingUser = storage.getUserById(req.user._id);
+    if (!existingUser) return res.status(404).json({ message: 'Admin not found' });
+    const passwordMatch = bcrypt.compareSync(currentPassword, existingUser.password);
+    if (!passwordMatch) return res.status(400).json({ message: 'Current password is incorrect' });
+    if (newPassword.length < 6) return res.status(400).json({ message: 'New password should be at least 6 characters' });
+
+    const hashedPassword = bcrypt.hashSync(newPassword, 10);
+    storage.updateUser(req.user._id, { password: hashedPassword, updatedAt: new Date().toISOString() });
+    res.json({ message: 'Password updated successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Password update failed', error: error.message });
+  }
+};
+
+exports.uploadAdminPhoto = async (req, res) => {
+  try {
+    const { photoUrl, photoBase64 } = req.body;
+    if (!photoUrl && !photoBase64) {
+      return res.status(400).json({ message: 'Photo upload data is required' });
+    }
+    const profilePhoto = photoUrl || photoBase64;
+    const user = storage.updateUser(req.user._id, { profilePhoto, updatedAt: new Date().toISOString() });
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: 'Photo upload failed', error: error.message });
+  }
+};

@@ -140,7 +140,7 @@
       "departure": "06:45",
       "arrival": "09:20",
       "fare": 820,
-      "seatsAvailable": 43,
+      "seatsAvailable": 42,
       "image": "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=900&q=80",
       "route": "Mumbai → Thane → Pune",
       "facilities": [
@@ -294,6 +294,14 @@
         "Food"
       ],
       "coach": "J10"
+    },
+    {
+      "_id": "train-1785872896467-595",
+      "name": "Vande Bharat Express",
+      "source": "Kolkata",
+      "destination": "Pune",
+      "seatsAvailable": 99,
+      "fare": 1000
     }
   ],
   "bookings": [
@@ -373,7 +381,7 @@
       "trainName": "Shatabdi Superfast",
       "source": "Mumbai",
       "destination": "Pune",
-      "status": "confirmed",
+      "status": "cancelled",
       "paymentStatus": "paid",
       "createdAt": "2026-08-04T15:09:56.613Z"
     },
@@ -496,6 +504,26 @@
       "status": "confirmed",
       "paymentStatus": "paid",
       "createdAt": "2026-08-04T19:04:01.685Z"
+    },
+    {
+      "_id": "booking-1785871959633-433",
+      "user": "user-1785839684782-634",
+      "train": "train-2",
+      "passengerName": "",
+      "age": "",
+      "gender": "Male",
+      "seatPreference": "Window",
+      "seats": 1,
+      "pnr": "PNRF5EE5C92",
+      "amount": 820,
+      "coach": "B2",
+      "seatNumber": "15C",
+      "trainName": "Shatabdi Superfast",
+      "source": "Mumbai",
+      "destination": "Pune",
+      "status": "confirmed",
+      "paymentStatus": "paid",
+      "createdAt": "2026-08-04T19:32:39.633Z"
     }
   ],
   "payments": [
@@ -598,6 +626,16 @@
       "transactionId": "TXND94BA749",
       "status": "success",
       "createdAt": "2026-08-04T19:04:01.688Z"
+    },
+    {
+      "_id": "payment-1785871959637-522",
+      "user": "user-1785839684782-634",
+      "booking": "booking-1785871959633-433",
+      "method": "UPI",
+      "amount": 820,
+      "transactionId": "TXN51F1E644",
+      "status": "success",
+      "createdAt": "2026-08-04T19:32:39.637Z"
     }
   ]
 }
