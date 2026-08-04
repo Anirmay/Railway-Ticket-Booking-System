@@ -1,9 +1,24 @@
 import { BrowserRouter, Routes, Route, Link, NavLink, useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { FaTrain, FaTicketAlt, FaShieldAlt, FaChartLine, FaCalendarAlt, FaMoneyBillWave, FaClipboardList, FaSearch, FaUserCircle, FaEnvelope, FaPhone, FaHandsHelping, FaCheck, FaReact, FaNodeJs, FaDatabase, FaLock, FaFacebook, FaInstagram, FaLinkedin, FaGithub, FaMapMarkerAlt, FaClock, FaLifeRing } from 'react-icons/fa';
+import { FaTrain, FaTicketAlt, FaShieldAlt, FaChartLine, FaCalendarAlt, FaMoneyBillWave, FaClipboardList, FaSearch, FaUserCircle, FaEnvelope, FaPhone, FaHandsHelping, FaCheck, FaReact, FaNodeJs, FaDatabase, FaLock, FaFacebook, FaInstagram, FaLinkedin, FaGithub, FaMapMarkerAlt, FaClock, FaLifeRing, FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import QRCode from 'react-qr-code';
 import './App.css';
 import Footer from './components/Footer.jsx';
+
+const stationOptions = [
+  'Delhi',
+  'Mumbai',
+  'Kolkata',
+  'New Delhi',
+  'Chennai',
+  'Bengaluru',
+  'Hyderabad',
+  'Vijayawada',
+  'Pune',
+  'Ahmedabad',
+  'Jaipur',
+];
 
 const API = 'http://localhost:5000/api';
 
@@ -467,6 +482,23 @@ function SearchTrainPage({ trains, onBook }) {
   });
   const [filtered, setFiltered] = useState(trains);
   const [submitted, setSubmitted] = useState(false);
+  const [expandedTrainId, setExpandedTrainId] = useState(null);
+
+  const stationAddressMap = {
+    Delhi: 'New Delhi Railway Station, Ajmeri Gate Road, New Delhi',
+    Mumbai: 'Chhatrapati Shivaji Terminus, Dadar Station Road, Mumbai',
+    Kolkata: 'Howrah Junction, Howrah, Kolkata',
+    'New Delhi': 'New Delhi Railway Station, Ajmeri Gate Road, New Delhi',
+    Bengaluru: 'Bengaluru City Junction, KR Market, Bengaluru',
+    Chennai: 'Chennai Central, Park Town, Chennai',
+    Hyderabad: 'Hyderabad Deccan Nampally, Hyderabad',
+    Vijayawada: 'Vijayawada Junction, MG Road, Vijayawada',
+    Pune: 'Pune Junction, Shivaji Nagar, Pune',
+    Ahmedabad: 'Ahmedabad Junction, Relief Road, Ahmedabad',
+    Jaipur: 'Jaipur Junction, Jaipur',
+  };
+
+  const getStationAddress = (station) => stationAddressMap[station] || `${station} Railway Station`;
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -498,8 +530,24 @@ function SearchTrainPage({ trains, onBook }) {
       <div className="mb-8 rounded-3xl bg-white p-6 shadow-sm">
         <h2 className="text-2xl font-semibold">Search Trains</h2>
         <form className="mt-4 grid gap-4 md:grid-cols-3" onSubmit={submit}>
-          <input className="rounded-2xl border border-slate-300 p-3" placeholder="Source" value={query.source} onChange={(e) => setQuery({ ...query, source: e.target.value })} />
-          <input className="rounded-2xl border border-slate-300 p-3" placeholder="Destination" value={query.destination} onChange={(e) => setQuery({ ...query, destination: e.target.value })} />
+          <div>
+            <input
+              className="rounded-2xl border border-slate-300 p-3 w-full"
+              list="station-options"
+              placeholder="Source"
+              value={query.source}
+              onChange={(e) => setQuery({ ...query, source: e.target.value })}
+            />
+          </div>
+          <div>
+            <input
+              className="rounded-2xl border border-slate-300 p-3 w-full"
+              list="station-options"
+              placeholder="Destination"
+              value={query.destination}
+              onChange={(e) => setQuery({ ...query, destination: e.target.value })}
+            />
+          </div>
           <input className="rounded-2xl border border-slate-300 p-3" type="date" value={query.date} onChange={(e) => setQuery({ ...query, date: e.target.value })} />
           <div className="rounded-2xl border border-slate-300 bg-slate-50 p-3">
             <select className="w-full bg-transparent text-slate-900 outline-none" value={query.travelClass} onChange={(e) => setQuery({ ...query, travelClass: e.target.value })}>
@@ -514,6 +562,11 @@ function SearchTrainPage({ trains, onBook }) {
           </div>
           <button className="md:col-span-3 rounded-2xl bg-blue-600 px-4 py-3 font-semibold text-white" type="submit">Search</button>
         </form>
+        <datalist id="station-options">
+          {stationOptions.map((station) => (
+            <option key={station} value={station} />
+          ))}
+        </datalist>
       </div>
       {submitted && filtered.length === 0 ? (
         <div className="rounded-3xl border border-slate-200 bg-white p-8 text-center text-slate-600 shadow-sm">
@@ -535,15 +588,47 @@ function SearchTrainPage({ trains, onBook }) {
           </thead>
           <tbody>
             {filtered.map((train) => (
-              <tr key={train._id} className="border-t border-slate-200 hover:bg-slate-50">
-                <td className="p-4"><div className="font-semibold">{train.name}</div><div className="text-sm text-slate-500">#{train.trainNumber}</div></td>
-                <td className="p-4">{train.source}</td>
-                <td className="p-4">{train.destination}</td>
-                <td className="p-4">{train.departure}</td>
-                <td className="p-4">{train.seatsAvailable}</td>
-                <td className="p-4">₹{train.fare}</td>
-                <td className="p-4"><button onClick={() => onBook(train)} className="rounded-full bg-blue-600 px-4 py-2 text-sm text-white">Book</button></td>
-              </tr>
+              <>
+                <tr key={train._id} className="border-t border-slate-200 hover:bg-slate-50">
+                  <td className="p-4">
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <div className="font-semibold">{train.name}</div>
+                        <div className="text-sm text-slate-500">#{train.trainNumber}</div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setExpandedTrainId(expandedTrainId === train._id ? null : train._id)}
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 text-slate-500 hover:bg-slate-100"
+                      >
+                        {expandedTrainId === train._id ? <FaChevronUp /> : <FaChevronDown />}
+                      </button>
+                    </div>
+                  </td>
+                  <td className="p-4">{train.source}</td>
+                  <td className="p-4">{train.destination}</td>
+                  <td className="p-4">{train.departure}</td>
+                  <td className="p-4">{train.seatsAvailable}</td>
+                  <td className="p-4">₹{train.fare}</td>
+                  <td className="p-4"><button onClick={() => onBook(train)} className="rounded-full bg-blue-600 px-4 py-2 text-sm text-white">Book</button></td>
+                </tr>
+                {expandedTrainId === train._id && (
+                  <tr className="bg-slate-50">
+                    <td colSpan={7} className="p-4">
+                      <div className="grid gap-4 md:grid-cols-2">
+                        <div className="rounded-3xl bg-white p-4 shadow-sm">
+                          <p className="text-sm font-semibold text-slate-900">Source Address</p>
+                          <p className="mt-2 text-sm text-slate-600">{getStationAddress(train.source)}</p>
+                        </div>
+                        <div className="rounded-3xl bg-white p-4 shadow-sm">
+                          <p className="text-sm font-semibold text-slate-900">Destination Address</p>
+                          <p className="mt-2 text-sm text-slate-600">{getStationAddress(train.destination)}</p>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </>
             ))}
           </tbody>
         </table>
@@ -640,15 +725,23 @@ function TicketPage({ booking }) {
           </div>
           <div className="rounded-3xl bg-white p-6 text-center shadow-sm">
             <div className="mb-3 inline-flex rounded-full bg-blue-100 p-3 text-blue-700"><FaTicketAlt /></div>
-            <div className="mx-auto grid h-24 w-24 grid-cols-5 gap-1 rounded-2xl bg-slate-200 p-1">
-              {Array.from({ length: 25 }).map((_, index) => (
-                <div
-                  key={index}
-                  className={`h-4 w-4 rounded-sm ${[0,1,4,5,6,9,10,11,13,14,15,18,19,20,23,24].includes(index) ? 'bg-slate-900' : 'bg-slate-300'}`}
-                />
-              ))}
+            <div className="mx-auto inline-flex h-40 w-40 items-center justify-center rounded-3xl bg-slate-100 p-3 shadow-inner">
+              <QRCode
+                value={JSON.stringify({
+                  pnr: booking?.pnr || 'PNR123456',
+                  passenger: booking?.passengerName || 'John Doe',
+                  train: booking?.train?.name || 'Rajdhani Express',
+                  date: booking?.journeyDate || '2026-08-20',
+                  source: booking?.train?.source || 'Delhi',
+                  destination: booking?.train?.destination || 'Mumbai',
+                  seat: booking?.seatNumber || '12A',
+                })}
+                bgColor="#ffffff"
+                fgColor="#0f172a"
+                size={160}
+              />
             </div>
-            <p className="mt-3 text-sm text-slate-500">Dummy QR Code</p>
+            <p className="mt-3 text-sm text-slate-500">Scan to verify your ticket</p>
           </div>
         </div>
         <div className="mt-6 flex gap-4">

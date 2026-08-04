@@ -121,7 +121,7 @@
       "departure": "08:00",
       "arrival": "20:30",
       "fare": 1865,
-      "seatsAvailable": 62,
+      "seatsAvailable": 61,
       "image": "https://images.unsplash.com/photo-1516008623956-7b68f2f4d6b1?auto=format&fit=crop&w=900&q=80",
       "route": "Delhi → Jaipur → Ahmedabad → Mumbai",
       "facilities": [
@@ -436,6 +436,26 @@
       "status": "confirmed",
       "paymentStatus": "paid",
       "createdAt": "2026-08-04T17:52:02.917Z"
+    },
+    {
+      "_id": "booking-1785867179653-337",
+      "user": "user-1785839684782-634",
+      "train": "train-1",
+      "passengerName": "",
+      "age": "",
+      "gender": "Male",
+      "seatPreference": "Window",
+      "seats": 1,
+      "pnr": "PNR89C39694",
+      "amount": 1865,
+      "coach": "A1",
+      "seatNumber": "8A",
+      "trainName": "Rajdhani Express",
+      "source": "Delhi",
+      "destination": "Mumbai",
+      "status": "confirmed",
+      "paymentStatus": "paid",
+      "createdAt": "2026-08-04T18:12:59.654Z"
     }
   ],
   "payments": [
@@ -508,6 +528,16 @@
       "transactionId": "TXNEB0D1E9B",
       "status": "success",
       "createdAt": "2026-08-04T17:52:02.922Z"
+    },
+    {
+      "_id": "payment-1785867179656-905",
+      "user": "user-1785839684782-634",
+      "booking": "booking-1785867179653-337",
+      "method": "UPI",
+      "amount": 1865,
+      "transactionId": "TXNA9331A95",
+      "status": "success",
+      "createdAt": "2026-08-04T18:12:59.656Z"
     }
   ]
 }
