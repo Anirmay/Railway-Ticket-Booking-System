@@ -61,7 +61,7 @@ exports.updateProfile = async (req, res) => {
   try {
     const updates = req.body;
     if (updates.password) updates.password = await bcrypt.hash(updates.password, 10);
-    const user = storage.updateUser(req.user._id, updates);
+    const user = await storage.updateUser(req.user._id, updates);
     res.json(user);
   } catch (error) {
     res.status(500).json({ message: 'Profile update failed', error: error.message });

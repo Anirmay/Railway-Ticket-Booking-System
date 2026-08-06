@@ -2029,7 +2029,24 @@ function AdminProfilePage({ user }) {
 
 function ManageTrains() {
   const [trainsList, setTrainsList] = useState([]);
-  useEffect(() => { fetch(`${API}/trains`).then((r) => r.json()).then(setTrainsList).catch(() => setTrainsList([])); }, []);
+  const loadTrains = async () => {
+    const res = await fetch(`${API}/trains`);
+    const data = await res.json();
+    setTrainsList(data);
+  };
+  useEffect(() => { loadTrains().catch(() => setTrainsList([])); }, []);
+
+  const removeTrain = async (id) => {
+    if (!window.confirm('Remove this train from the database?')) return;
+    const res = await fetch(`${API}/trains/${id}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+    });
+    if (res.ok) {
+      loadTrains();
+    }
+  };
+
   return (
     <div className="mx-auto max-w-7xl px-6 py-10">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -2057,7 +2074,10 @@ function ManageTrains() {
                 <td className="p-4">{t.source} → {t.destination}</td>
                 <td className="p-4">{t.seatsAvailable}</td>
                 <td className="p-4">₹{t.fare}</td>
-                <td className="p-4"><Link to={`/admin/trains/${t._id}/edit`} className="text-blue-600">Edit</Link></td>
+                <td className="p-4 flex gap-3">
+                  <Link to={`/admin/trains/${t._id}/edit`} className="text-blue-600">Edit</Link>
+                  <button onClick={() => removeTrain(t._id)} className="text-red-600">Remove</button>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -2149,19 +2169,31 @@ function EditTrain() {
 
 function ManageUsers() {
   const [users, setUsers] = useState([]);
-  useEffect(() => {
-    fetch(`${API}/admin/users`, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } })
-      .then((r) => r.json())
-      .then(setUsers)
-      .catch(() => setUsers([]));
-  }, []);
+  const loadUsers = async () => {
+    const res = await fetch(`${API}/admin/users`, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
+    const data = await res.json();
+    setUsers(data);
+  };
+  useEffect(() => { loadUsers().catch(() => setUsers([])); }, []);
+
+  const removeUser = async (id) => {
+    if (!window.confirm('Remove this user from the database?')) return;
+    const res = await fetch(`${API}/admin/users/${id}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+    });
+    if (res.ok) {
+      loadUsers();
+    }
+  };
+
   return (
     <div className="mx-auto max-w-7xl px-6 py-10">
       <h3 className="text-2xl font-semibold">Manage Users</h3>
       <div className="mt-6 overflow-hidden rounded-2xl bg-white shadow">
         <table className="min-w-full text-left">
           <thead className="bg-slate-100 text-sm text-slate-600"><tr><th className="p-4">Name</th><th className="p-4">Email</th><th className="p-4">Actions</th></tr></thead>
-          <tbody>{users.map(u=> (<tr key={u._id} className="border-t"><td className="p-4">{u.name}</td><td className="p-4">{u.email}</td><td className="p-4"><button className="text-red-600">Remove</button></td></tr>))}</tbody>
+          <tbody>{users.map(u=> (<tr key={u._id} className="border-t"><td className="p-4">{u.name}</td><td className="p-4">{u.email}</td><td className="p-4"><button onClick={() => removeUser(u._id)} className="text-red-600">Remove</button></td></tr>))}</tbody>
         </table>
       </div>
     </div>

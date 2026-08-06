@@ -4,13 +4,13 @@ const { randomUUID } = require('crypto');
 exports.createBooking = async (req, res) => {
   try {
     const { trainId, passengerName, age, gender, seatPreference, seats, journeyDate } = req.body;
-    const train = storage.getTrainById(trainId);
+    const train = await storage.getTrainById(trainId);
     if (!train) return res.status(404).json({ message: 'Train not found' });
     if (train.seatsAvailable < Number(seats)) return res.status(400).json({ message: 'Not enough seats available' });
 
     const pnr = `PNR${randomUUID().slice(0, 8).toUpperCase()}`;
     const amount = train.fare * Number(seats);
-    const booking = storage.createBooking({
+    const booking = await storage.createBooking({
       user: req.user._id,
       train: train._id,
       passengerName,
@@ -24,14 +24,12 @@ exports.createBooking = async (req, res) => {
       coach: train.coach,
       seatNumber: `${Math.floor(Math.random() * 20) + 1}${['A', 'B', 'C'][Math.floor(Math.random() * 3)]}`,
       trainName: train.name,
-      source: train.source,
-      destination: train.destination,
     });
 
     train.seatsAvailable -= Number(seats);
-    storage.updateTrain(train._id, { seatsAvailable: train.seatsAvailable });
+    await storage.updateTrain(train._id, { seatsAvailable: train.seatsAvailable });
 
-    const payment = storage.createPayment({
+    const payment = await storage.createPayment({
       user: req.user._id,
       booking: booking._id,
       method: 'UPI',
@@ -47,10 +45,8 @@ exports.createBooking = async (req, res) => {
 
 exports.getMyBookings = async (req, res) => {
   try {
-    const bookings = storage.listBookingsForUser(req.user._id);
-    const trains = storage.loadState().trains;
-    const enriched = bookings.map((booking) => ({ ...booking, train: trains.find((train) => train._id === booking.train) }));
-    res.json(enriched);
+    const bookings = await storage.listBookingsForUser(req.user._id);
+    res.json(bookings);
   } catch (error) {
     res.status(500).json({ message: 'Failed to fetch bookings', error: error.message });
   }
@@ -58,7 +54,7 @@ exports.getMyBookings = async (req, res) => {
 
 exports.cancelBooking = async (req, res) => {
   try {
-    const booking = storage.updateBooking(req.params.id, { status: 'cancelled' });
+    const booking = await storage.updateBooking(req.params.id, { status: 'cancelled' });
     if (!booking) return res.status(404).json({ message: 'Booking not found' });
     res.json({ message: 'Booking cancelled', booking });
   } catch (error) {
@@ -68,11 +64,8 @@ exports.cancelBooking = async (req, res) => {
 
 exports.getAllBookings = async (req, res) => {
   try {
-    const bookings = storage.listAllBookings();
-    const users = storage.loadState().users;
-    const trains = storage.loadState().trains;
-    const enriched = bookings.map((booking) => ({ ...booking, user: users.find((user) => user._id === booking.user), train: trains.find((train) => train._id === booking.train) }));
-    res.json(enriched);
+    const bookings = await storage.listAllBookings();
+    res.json(bookings);
   } catch (error) {
     res.status(500).json({ message: 'Failed to fetch all bookings', error: error.message });
   }
@@ -80,7 +73,7 @@ exports.getAllBookings = async (req, res) => {
 
 exports.updateBookingStatus = async (req, res) => {
   try {
-    const booking = storage.updateBooking(req.params.id, { status: req.body.status || undefined, paymentStatus: req.body.paymentStatus || undefined });
+    const booking = await storage.updateBooking(req.params.id, { status: req.body.status || undefined, paymentStatus: req.body.paymentStatus || undefined });
     if (!booking) return res.status(404).json({ message: 'Booking not found' });
     res.json(booking);
   } catch (error) {

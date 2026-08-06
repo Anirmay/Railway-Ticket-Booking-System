@@ -128,6 +128,16 @@
       "password": "$2b$10$4Q/0XDxnKWbLge4lVCLYze/X4osncpIMLWKh48oX8ao4n9Mlj5jiy",
       "role": "user",
       "status": "active"
+    },
+    {
+      "_id": "user-1786026817845-0",
+      "name": "Devtanu Das",
+      "username": "Dev",
+      "email": "devtanudas112005@gmail.com",
+      "phone": "8167379472",
+      "password": "$2b$10$k3f3ejz.bXfaGO7nnaTBf.yloHUE8d3kzzWRxme.9ZaTFXSIbWBHe",
+      "role": "user",
+      "status": "active"
     }
   ],
   "trains": [
@@ -140,7 +150,7 @@
       "departure": "08:00",
       "arrival": "20:30",
       "fare": 1865,
-      "seatsAvailable": 59,
+      "seatsAvailable": 56,
       "image": "https://images.unsplash.com/photo-1516008623956-7b68f2f4d6b1?auto=format&fit=crop&w=900&q=80",
       "route": "Delhi → Jaipur → Ahmedabad → Mumbai",
       "facilities": [
@@ -321,6 +331,14 @@
       "destination": "Pune",
       "seatsAvailable": 99,
       "fare": 1000
+    },
+    {
+      "_id": "train-1786027615342-40",
+      "name": "Saraighat Express",
+      "source": "Howrah",
+      "destination": "Guwahati",
+      "seatsAvailable": 51,
+      "fare": 300
     }
   ],
   "bookings": [
@@ -543,6 +561,26 @@
       "status": "confirmed",
       "paymentStatus": "paid",
       "createdAt": "2026-08-04T19:32:39.633Z"
+    },
+    {
+      "_id": "booking-1786026880586-502",
+      "user": "user-1786026817845-0",
+      "train": "train-1",
+      "passengerName": "Saikat",
+      "age": "40",
+      "gender": "Male",
+      "seatPreference": "Window",
+      "seats": 1,
+      "pnr": "PNRBB49B0BC",
+      "amount": 1865,
+      "coach": "A1",
+      "seatNumber": "20C",
+      "trainName": "Rajdhani Express",
+      "source": "Delhi",
+      "destination": "Mumbai",
+      "status": "cancelled",
+      "paymentStatus": "paid",
+      "createdAt": "2026-08-06T14:34:40.586Z"
     }
   ],
   "payments": [
@@ -655,6 +693,16 @@
       "transactionId": "TXN51F1E644",
       "status": "success",
       "createdAt": "2026-08-04T19:32:39.637Z"
+    },
+    {
+      "_id": "payment-1786026880589-397",
+      "user": "user-1786026817845-0",
+      "booking": "booking-1786026880586-502",
+      "method": "UPI",
+      "amount": 1865,
+      "transactionId": "TXNF2153FA5",
+      "status": "success",
+      "createdAt": "2026-08-06T14:34:40.589Z"
     }
   ]
 }
