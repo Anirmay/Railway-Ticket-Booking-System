@@ -20,7 +20,7 @@ const stationOptions = [
   'Jaipur',
 ];
 
-const API = 'http://localhost:5000/api';
+const API = import.meta.env.VITE_API || 'http://localhost:5000/api';
 
 function Layout({ children, user, logout }) {
   const location = useLocation();

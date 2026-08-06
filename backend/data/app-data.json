@@ -8,7 +8,26 @@
       "phone": "0000000000",
       "password": "$2b$10$SRVz63wB9rqraLYk/PadbeKQ.WOBtF1qQ3SB1CZu8633f//WB70li",
       "role": "admin",
-      "status": "active"
+      "status": "active",
+      "department": "Railway Administration",
+      "profilePhoto": "",
+      "address": "RailEase Headquarters",
+      "city": "Bardhaman",
+      "state": "West Bengal",
+      "country": "India",
+      "pinCode": "713101",
+      "employeeId": "ADM-1001",
+      "memberSince": "January 2026",
+      "lastLogin": "2026-08-06T05:39:21.887Z",
+      "updatedAt": "2026-08-06T05:39:21.888Z",
+      "notifications": {
+        "booking": true,
+        "payment": true,
+        "userRegistration": true,
+        "refund": true,
+        "reports": true,
+        "email": true
+      }
     },
     {
       "_id": "user-2",
