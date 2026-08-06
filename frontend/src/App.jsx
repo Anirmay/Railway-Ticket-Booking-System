@@ -1,8 +1,9 @@
 import { BrowserRouter, Routes, Route, Link, NavLink, Navigate, useNavigate, useParams, useLocation } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { FaTrain, FaTicketAlt, FaShieldAlt, FaChartLine, FaCalendarAlt, FaMoneyBillWave, FaClipboardList, FaSearch, FaUserCircle, FaEnvelope, FaPhone, FaHandsHelping, FaCheck, FaUsers, FaReact, FaNodeJs, FaDatabase, FaLock, FaFacebook, FaInstagram, FaLinkedin, FaGithub, FaMapMarkerAlt, FaClock, FaLifeRing, FaChevronDown, FaChevronUp, FaHistory } from 'react-icons/fa';
 import QRCode from 'react-qr-code';
+import html2canvas from 'html2canvas';
 import './App.css';
 import Footer from './components/Footer.jsx';
 
@@ -684,8 +685,10 @@ function SearchTrainPage({ trains, onBook }) {
 }
 
 function BookingPage({ selectedTrain, onPay }) {
-  const [form, setForm] = useState({ passengerName: '', age: '', gender: 'Male', seatPreference: 'Window', seats: 1 });
+  const [form, setForm] = useState({ passengerName: '', age: '', gender: 'Male', seatPreference: 'Window', seats: 1, journeyDate: '' });
+  const [error, setError] = useState('');
   const amount = (selectedTrain?.fare || 0) * Number(form.seats || 1);
+  const canPay = selectedTrain && form.passengerName && form.age && form.journeyDate && Number(form.seats) > 0;
 
   return (
     <div className="mx-auto max-w-6xl px-6 py-10">
@@ -694,13 +697,25 @@ function BookingPage({ selectedTrain, onPay }) {
           <h2 className="text-2xl font-semibold">Book Ticket</h2>
           <div className="mt-4 grid gap-4 md:grid-cols-2">
             <input className="rounded-2xl border border-slate-300 p-3" placeholder="Passenger Name" value={form.passengerName} onChange={(e) => setForm({ ...form, passengerName: e.target.value })} />
-            <input className="rounded-2xl border border-slate-300 p-3" placeholder="Age" value={form.age} onChange={(e) => setForm({ ...form, age: e.target.value })} />
+            <input className="rounded-2xl border border-slate-300 p-3" placeholder="Age" type="number" min="1" value={form.age} onChange={(e) => setForm({ ...form, age: e.target.value })} />
             <select className="rounded-2xl border border-slate-300 p-3" value={form.gender} onChange={(e) => setForm({ ...form, gender: e.target.value })}><option>Male</option><option>Female</option><option>Other</option></select>
             <select className="rounded-2xl border border-slate-300 p-3" value={form.seatPreference} onChange={(e) => setForm({ ...form, seatPreference: e.target.value })}><option>Window</option><option>Aisle</option><option>Middle</option></select>
             <input className="rounded-2xl border border-slate-300 p-3" type="number" min="1" max="6" value={form.seats} onChange={(e) => setForm({ ...form, seats: e.target.value })} />
-            <input className="rounded-2xl border border-slate-300 p-3" type="date" />
+            <input className="rounded-2xl border border-slate-300 p-3" type="date" value={form.journeyDate} onChange={(e) => setForm({ ...form, journeyDate: e.target.value })} />
           </div>
-          <button onClick={() => onPay({ ...form, trainId: selectedTrain?._id, amount })} className="mt-6 rounded-2xl bg-blue-600 px-4 py-3 font-semibold text-white">Proceed to Payment</button>
+          {error && <div className="mt-4 rounded-2xl bg-rose-100 px-4 py-3 text-sm text-rose-700">{error}</div>}
+          <button type="button" disabled={!canPay} onClick={() => {
+            if (!selectedTrain) {
+              setError('Please select a train first.');
+              return;
+            }
+            if (!form.passengerName || !form.age || !form.journeyDate) {
+              setError('Please fill in all required fields.');
+              return;
+            }
+            setError('');
+            onPay({ ...form, trainId: selectedTrain._id, amount });
+          }} className={`mt-6 rounded-2xl px-4 py-3 font-semibold text-white ${canPay ? 'bg-blue-600 hover:bg-blue-700' : 'bg-slate-300 cursor-not-allowed'}`}>Proceed to Payment</button>
         </div>
         <div className="rounded-3xl border border-slate-200 bg-slate-900 p-6 text-white shadow-sm">
           <h3 className="text-xl font-semibold">Fare Summary</h3>
@@ -747,6 +762,36 @@ function PaymentPage({ bookingInfo, onFinish }) {
 }
 
 function TicketPage({ booking }) {
+  const ticketRef = useRef(null);
+
+  const handlePrintTicket = () => {
+    if (!ticketRef.current) return;
+    const printContents = ticketRef.current.innerHTML;
+    const w = window.open('', '_blank');
+    w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Ticket</title><style>body{font-family:Inter,Arial,sans-serif;color:#0f172a;padding:20px} .ticket{max-width:900px;margin:0 auto} .rounded-3xl{border-radius:1rem}</style></head><body><div class="ticket">${printContents}</div></body></html>`);
+    w.document.close();
+    w.focus();
+    setTimeout(() => { w.print(); }, 300);
+  };
+
+  const handleDownloadTicket = async () => {
+    if (!ticketRef.current) return;
+    try {
+      const node = ticketRef.current;
+      const canvas = await html2canvas(node, { scale: 2, useCORS: true, backgroundColor: null });
+      const dataUrl = canvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.href = dataUrl;
+      link.download = `${booking?.pnr || 'ticket'}.png`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (err) {
+      console.error('Download failed, falling back to print:', err);
+      handlePrintTicket();
+    }
+  };
+
   return (
     <div className="mx-auto max-w-5xl px-6 py-10">
       <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
@@ -757,7 +802,7 @@ function TicketPage({ booking }) {
           </div>
           <div className="rounded-full bg-green-100 px-4 py-2 text-sm font-medium text-green-700">Payment Confirmed</div>
         </div>
-        <div className="mt-8 grid gap-6 rounded-3xl border border-slate-200 bg-slate-50 p-6 lg:grid-cols-[1fr_0.7fr]">
+        <div ref={ticketRef} className="mt-8 grid gap-6 rounded-3xl border border-slate-200 bg-slate-50 p-6 lg:grid-cols-[1fr_0.7fr]">
           <div className="space-y-3 text-sm text-slate-700">
             <div className="flex justify-between"><span>PNR</span><span className="font-semibold">{booking?.pnr || 'PNR123456'}</span></div>
             <div className="flex justify-between"><span>Passenger</span><span>{booking?.passengerName}</span></div>
@@ -790,8 +835,8 @@ function TicketPage({ booking }) {
           </div>
         </div>
         <div className="mt-6 flex gap-4">
-          <button className="rounded-2xl bg-blue-600 px-4 py-3 font-semibold text-white">Download Ticket</button>
-          <button className="rounded-2xl border border-slate-300 px-4 py-3 font-semibold">Print Ticket</button>
+          <button onClick={handleDownloadTicket} className="rounded-2xl bg-blue-600 px-4 py-3 font-semibold text-white">Download Ticket</button>
+          <button onClick={handlePrintTicket} className="rounded-2xl border border-slate-300 px-4 py-3 font-semibold">Print Ticket</button>
         </div>
       </div>
     </div>
